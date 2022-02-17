@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<secureUtility>
+    <values>
+        <byteArray>0,1,1,0,1,1,1,0,1,0,1,1,1,0,0,1</byteArray>
+        <transformation>AES/CBC/PKCS5Padding</transformation>
+		<algo>AES</algo>
+        <secretKey>
+		  <algorithm>PBKDF2WithHmacSHA256</algorithm>
+		  <pwd>BB2021Confirm</pwd>
+		  <salt>c21S@K</salt>
+	    </secretKey>
+    </values>
+
+</secureUtility>

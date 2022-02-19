@@ -36,5 +36,12 @@ public class BBConstant {
 		public static int SUCCESS = 0;
 
 	}
+	
+	public static interface Path {
+
+		public static String resource = "src/main/resources/";
+		public static String swagger ="/swagger-ui/";
+
+	}
 
 }

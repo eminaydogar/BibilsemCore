@@ -13,6 +13,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.project.cache.BBConstant.Path;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -50,8 +52,8 @@ public class FileReader {
 		return result;
 	}
 
-	public FileReader createReaderResource() {
-		this.defaultPath = "src/main/resources/";
+	public FileReader createResourceReader() {
+		this.defaultPath = Path.resource;
 		return this;
 	}
 
@@ -62,15 +64,12 @@ public class FileReader {
 		if (nodeList.getLength() > 0) {
 			for (int i = 0; i < nodeList.getLength(); i++) {
 				Node node = nodeList.item(i);
-				System.out.println("---------------------------------------------");
-
 				if (node != null && node.getNodeName() != null && !node.getNodeName().equalsIgnoreCase("#text")
 						&& node.getTextContent() != null && !node.getTextContent().isEmpty()
 						&& node.getChildNodes() != null && node.getChildNodes().getLength() == 1) {
 
 					if (node.getNodeType() == Node.ELEMENT_NODE) {
-						System.out.println(node.getChildNodes().getLength());
-						System.out.println(
+						log.info(
 								"key: " + node.getNodeName() + " value: " + node.getTextContent() + " eklendi");
 						map.put(node.getNodeName(), node.getTextContent().trim());
 					}
@@ -82,7 +81,7 @@ public class FileReader {
 
 	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {
 		FileReader fr = new FileReader();
-		fr.createReaderResource().readXMLFile("secure.xml", "securUtility");
+		fr.createResourceReader().readXMLFile("secure.xml", "securUtility");
 
 	}
 

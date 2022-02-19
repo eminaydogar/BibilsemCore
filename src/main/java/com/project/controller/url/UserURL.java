@@ -8,16 +8,16 @@ public class UserURL {
 	
 	public static final String basePath = "api/users";
 	
-	@URLSecurity(url = "/saveCoupon", accessType = {UserRoleTYPE.USER,UserRoleTYPE.ADMIN})
+	@URLSecurity(accessType = {UserRoleTYPE.USER,UserRoleTYPE.ADMIN})
 	public static final String saveCoupon = "/saveCoupon";
 	
-	@URLSecurity(url = "/updateUser", accessType = {UserRoleTYPE.USER,UserRoleTYPE.ADMIN})
+	@URLSecurity(accessType = {UserRoleTYPE.USER,UserRoleTYPE.ADMIN})
 	public static final String updateUser = "/updateUser";
 
-	@URLSecurity(url = "/savePrizeRequest", accessType = {UserRoleTYPE.USER,UserRoleTYPE.ADMIN})
+	@URLSecurity(accessType = {UserRoleTYPE.USER,UserRoleTYPE.ADMIN})
 	public static final String updateUserPrizeRequest = "/savePrizeRequest";
 	
-	@URLSecurity(url = "/savePrize", accessType = {UserRoleTYPE.USER,UserRoleTYPE.ADMIN})
+	@URLSecurity(accessType = {UserRoleTYPE.USER,UserRoleTYPE.ADMIN})
 	public static final String savePrize = "/savePrize";
 	
 	

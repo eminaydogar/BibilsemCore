@@ -1,6 +1,5 @@
 package com.project.job.scheduledTask;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.project.annotation.JobDefinition;
@@ -8,7 +7,9 @@ import com.project.job.AJob;
 import com.project.job.JobDao;
 import com.project.job.beans.CouponValidatiorBean;
 
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @JobDefinition
 public class CouponValidatorJob extends AJob {
 
@@ -18,50 +19,93 @@ public class CouponValidatorJob extends AJob {
 		this.dao = dao;
 		identifier = 1L;
 	}
-	
+
 	@Override
 	protected void initilazeBean() {
 		jobBean = dao.initilazer(identifier);
 	}
-	
+
 	@Override
 	protected void execute() {
 
-		List<CouponValidatiorBean> beanList = new ArrayList<CouponValidatiorBean>();
-		@SuppressWarnings("unchecked")
-		List<Object[]> results = dao.getEntityManager().createNativeQuery("SELECT \r\n"
-				+ "CD.ID COUPON_ID,\r\n"
-				+ "QD.ID QUESTION_ID,\r\n"
-				+ "QAD.ANSWER_VALUE COUPON_ANSWER,\r\n"
-				+ "QD.QUESTION_TEXT,\r\n"
-				+ "QD.ANSWER QUESTION_ANSWER\r\n"
-				+ " FROM coupon_definition CD \r\n"
-				+ "JOIN COUPON_QUESTION_ANSWER_LIST CQAL\r\n"
-				+ "ON CQAL.COUPON_ID = CD.ID\r\n"
-				+ "JOIN QUESTION_ANSWER_DEFINITION QAD\r\n"
-				+ "ON QAD.ID=CQAL.QUESTION_ANSWER_ID\r\n"
-				+ "JOIN QUESTION_DEFINITION QD\r\n"
-				+ "ON QD.ID=QAD.QUESTION_ID\r\n"
-				+ "WHERE CD.EDATE IS NULL AND CD.COUPON_STATUS ='W'").getResultList();
-		CouponValidatiorBean tempBean = null;
-		if(results!=null) {
-			for(Object[] result:results) {
+		List<Object[]> results = dao.getResultList("SELECT \r\n" + "				CD.ID COUPON_ID,\r\n"
+				+ "				QD.ID QUESTION_ID,\r\n" + "				QAD.ANSWER_VALUE COUPON_ANSWER,\r\n"
+				+ "				QD.ANSWER QUESTION_ANSWER,\r\n" + "				UCL.USER_ID,\r\n"
+				+ "				CD.COUPON_PRICE\r\n" + "				FROM coupon_definition CD \r\n"
+				+ "				LEFT JOIN COUPON_QUESTION_ANSWER_LIST CQAL\r\n"
+				+ "				ON CQAL.COUPON_ID = CD.ID\r\n"
+				+ "				LEFT JOIN QUESTION_ANSWER_DEFINITION QAD\r\n"
+				+ "				ON QAD.ID=CQAL.QUESTION_ANSWER_ID\r\n"
+				+ "				LEFT JOIN QUESTION_DEFINITION QD\r\n" + "				ON QD.ID=QAD.QUESTION_ID\r\n"
+				+ "				                JOIN USER_COUPON_LIST UCL\r\n"
+				+ "                ON UCL.COUPON_ID = CD.ID"
+				+ "                WHERE CD.COUPON_STATUS ='W' AND QD.ANSWER IS NOT NULL ORDER BY COUPON_ID", null);
+		CouponValidatiorBean processBean = null;
+		if (results != null) {
+			for (Object[] result : results) {
 				CouponValidatiorBean bean = new CouponValidatiorBean(result);
-				if(tempBean==null) {
-					beanList.add(bean);
-					continue;
-				}
-				else if(tempBean.getCouponId()==bean.getCouponId()) {
-					tempBean.setNext(bean);
-				}else {
-					beanList.add(tempBean);
+				if (processBean == null) {
+					processBean = bean;
+				} else if (processBean.getCouponId() == bean.getCouponId()) {
+					setNextNode(processBean, bean);
+				} else {
+					System.out.println("--------------------UPDATE ZAMANI-------------");
+					updateCouponStatus(processBean);
+					processBean = bean;
 				}
 			}
-			
+			// son kupon dizide process olmayacağı için bu kosul konulmalı
+			if (processBean != null) {
+				updateCouponStatus(processBean);
+			}
+
 		}
 
 	}
 
+	private void updateCouponStatus(CouponValidatiorBean bean) {
 
+		boolean isExecuted = false;
+		CouponValidatiorBean tempBean = bean;
+		do {
+
+			if (!tempBean.getQuestion_answer().equalsIgnoreCase(tempBean.getCoupon_answer())) {
+				executeStatus("F", bean.getCouponId());
+				isExecuted = true;
+				break;
+			}
+			tempBean = tempBean.getNext();
+
+		} while (tempBean != null);
+
+		if (!isExecuted) {
+			executeStatus("S", bean.getCouponId());
+			executeBBPoint(bean.getCouponPrize(), bean.getUserId());
+		}
+
+	}
+
+	private void executeStatus(String status, Long couponId) {
+		try {
+			dao.executeUpdate("UPDATE COUPON_DEFINITION SET COUPON_STATUS = ? WHERE ID=?", status, couponId);
+		} catch (Exception e) {
+			log.error(e.getMessage());
+		}
+	}
+	
+	private void executeBBPoint(Long couponPrice, Long userId) {
+		try {
+			dao.executeUpdate("UPDATE USER_DEFINITION SET bbpoint = bbpoint + ? WHERE ID=?", couponPrice, userId);
+		} catch (Exception e) {
+			log.error(e.getMessage());
+		}
+	}
+
+	private void setNextNode(CouponValidatiorBean baseBean, CouponValidatiorBean childBean) {
+		while (baseBean.getNext() != null) {
+			baseBean = baseBean.getNext();
+		}
+		baseBean.setNext(childBean);
+	}
 
 }

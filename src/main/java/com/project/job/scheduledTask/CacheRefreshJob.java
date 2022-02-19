@@ -26,20 +26,18 @@ public class CacheRefreshJob extends AJob {
 		jobBean = dao.initilazer(identifier);
 	}
 
-	// @Transactional(value = TxType.REQUIRES_NEW)
-	@SuppressWarnings("unchecked")
+
 	@Override
 	protected void execute() {
 		try {
 			String activeQuestionSQL = "Select * from question_definition where status='Y'";
-			List<QuestionDefinition> questionDefinitionList = dao.getEntityManager()
-					.createNativeQuery(activeQuestionSQL, QuestionDefinition.class).getResultList();
+			List<QuestionDefinition> questionDefinitionList = 
+					dao.getResultList(activeQuestionSQL, QuestionDefinition.class,null);
 			if (questionDefinitionList != null && questionDefinitionList.size() > 0) {
 				QuestionCache.getContext().set(questionDefinitionList);
 			}
 		} catch (Exception e) {
 			log.error("[CacheRefreshJob]" + e.getMessage());
-			// dao.getEntityManager().getTransaction().rollback();
 		}
 	}
 

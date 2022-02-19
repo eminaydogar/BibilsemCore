@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.project.entity.QuestionAnswerDefinition;
 import com.project.entity.RoleDefinition;
 import com.project.enums.UserRoleTYPE;
 import com.project.exception.EntityNotFoundException;

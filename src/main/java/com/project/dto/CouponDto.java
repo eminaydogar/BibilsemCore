@@ -61,14 +61,6 @@ public class CouponDto implements IDto, Serializable {
 
 	
 
-	/*
-	 * private Set<QuestionAnswerDefinition> toQuestionAnswerEntity() {
-	 * Set<QuestionAnswerDefinition> questionAnswerDefinitionSet = new
-	 * HashSet<QuestionAnswerDefinition>(); if (this.details != null) { for
-	 * (QuestionAnswerDto questionAnswerDTO : this.details) {
-	 * questionAnswerDefinitionSet.add(questionAnswerDTO.toEntity()); } } return
-	 * questionAnswerDefinitionSet; }
-	 */
 
 	/////////////// DTO Converters ///////////////////////
 

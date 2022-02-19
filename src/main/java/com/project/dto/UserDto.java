@@ -34,57 +34,48 @@ public class UserDto implements IDto, Serializable {
 	}
 
 	public UserDto(UserDefinition user) {
-		this.id = user.getId();
-		this.username = user.getUsername();
-		this.password = user.getPassword();
-		this.email = user.getEmail();
-		this.bbPoint = user.getBbPoint();
-		this.isBlackList = user.getIsBlackList();
-		dtoConverter(user, true, true, true);
+		fillSimpleDto(user);
+		this.roles = roleDtoConverter(user.getRoles());
+		this.coupons = couponDtoConverter(user.getCoupons());
+		this.prizes = prizeRequestDtoConverter(user.getPrizes());
 	}
 
-	private UserDto(UserDefinition user, boolean fetchRoles, boolean fetchCoupons, boolean fetchprizes) {
+	private void fillSimpleDto(UserDefinition user) {
 		this.id = user.getId();
 		this.username = user.getUsername();
 		this.password = user.getPassword();
 		this.email = user.getEmail();
 		this.bbPoint = user.getBbPoint();
 		this.isBlackList = user.getIsBlackList();
-		this.phoneNumber = user.getPhoneNumber();
-		dtoConverter(user, fetchRoles, fetchCoupons, fetchprizes);
 	}
 
 	public UserDto single(UserDefinition user) {
-		return new UserDto(user, false, false, false);
+		fillSimpleDto(user);
+		return this;
 	}
 
-	public UserDto withOnlyRoles(UserDefinition user) {
-		return new UserDto(user, true, false, false);
+	public UserDto withRoles(UserDefinition user) {
+		fillSimpleDto(user);
+		this.roles = roleDtoConverter(user.getRoles());
+		return this;
 	}
 
-	public UserDto withOnlyCoupons(UserDefinition user) {
-		return new UserDto(user, false, true, false);
+	public UserDto withCoupons(UserDefinition user) {
+		fillSimpleDto(user);
+		this.coupons = couponDtoConverter(user.getCoupons());
+		return this;
 	}
 
-	public UserDto withOnlyPrizes(UserDefinition user) {
-		return new UserDto(user, false, false, true);
+	public UserDto withPrizes(UserDefinition user) {
+		fillSimpleDto(user);
+		this.prizes = prizeRequestDtoConverter(user.getPrizes());
+		return this;
 	}
 
-
-
-	private void dtoConverter(UserDefinition user, boolean fetchRoles, boolean fetchCoupons, boolean fetchprizes) {
-		if (fetchRoles) {
-			roles = roleDtoConverter(user.getRoles());
-		}
-		if (fetchCoupons)
-			coupons = couponDtoConverter(user.getCoupons());
-		if (fetchprizes)
-			prizes = prizeRequestDtoConverter(user.getPrizes());
-	}
-
-	///////////////////////////// Set<DTO> Converters
-	///////////////////////////// ////////////////////////////////////
-
+	/*
+	 * Set<DTO> Converters  FOR FECTH_TYPE = EAGER 
+	 * 
+	 */
 	private Set<RoleDto> roleDtoConverter(Set<RoleDefinition> roles) {
 		Set<RoleDto> roleDtoSet = new HashSet<RoleDto>();
 		if (roles != null) {
@@ -118,28 +109,4 @@ public class UserDto implements IDto, Serializable {
 		return requestDtoSet;
 	}
 
-	//////////////////////////// Set<Entity> Converters
-	//////////////////////////// ////////////////////////////////
-
-	/*
-	 * private Set<CouponDefinition> couponEntityConverter(Set<CouponDto> coupons) {
-	 * Set<CouponDefinition> couponDefinitionSet = new HashSet<CouponDefinition>();
-	 * if (coupons != null) { for (CouponDto couponDto : coupons) {
-	 * couponDefinitionSet.add(couponDto.toEntity()); } } return
-	 * couponDefinitionSet; }
-	 */
-	/*
-	 * private Set<RoleDefinition> roleEntityConverter(Set<RoleDto> roles) {
-	 * Set<RoleDefinition> roleDefinitionSet = new HashSet<RoleDefinition>(); if
-	 * (roles != null) { for (RoleDto roleDto : roles) {
-	 * roleDefinitionSet.add(roleDto.toEntity()); } } return roleDefinitionSet; }
-	 * 
-	 * private Set<PrizeRequestDefinition>
-	 * prizeRequestEntityConverter(Set<PrizeRequestDto> reqs) {
-	 * Set<PrizeRequestDefinition> prizeRequestDefinitionSet = new
-	 * HashSet<PrizeRequestDefinition>(); if (reqs != null) { for (PrizeRequestDto
-	 * prizeRequestDto : reqs) {
-	 * prizeRequestDefinitionSet.add(prizeRequestDto.toEntity()); } } return
-	 * prizeRequestDefinitionSet; }
-	 */
 }

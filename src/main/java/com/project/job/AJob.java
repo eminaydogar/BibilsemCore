@@ -1,10 +1,12 @@
 package com.project.job;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.project.cache.BBConstant.TIME_TYPE;
+import com.project.utility.ObjectUtilty;
 
 public abstract class AJob implements Runnable {
 
@@ -21,7 +23,6 @@ public abstract class AJob implements Runnable {
 	protected abstract void initilazeBean();
 
 	protected abstract void execute();
-	
 
 	protected Integer sleepTime() {
 		return (int) (identifier * SECOND_TIME) / 2;
@@ -47,8 +48,8 @@ public abstract class AJob implements Runnable {
 	public void run() {
 		try {
 			initilazeBean();
-			System.out.println("---------------------------------------------");
 			if (!isShootDown() && getFlag().equalsIgnoreCase("Y") && isExecutable()) {
+				LOGGER.info(getName() + " JOB start");
 				execute();
 			}
 		} catch (Exception e) {
@@ -65,22 +66,15 @@ public abstract class AJob implements Runnable {
 
 	protected boolean isExecutable() {
 		if (executableDate == null) {
-			executableDate = nextDate(getDelay());
-			return true;
+			executableDate = ObjectUtilty.createNextDate(TIME_TYPE.MINUTE, getDelay());
 		} else {
 			Date now = new Date();
-			if (now.after(executableDate)) {
-				executableDate = nextDate(getDelay());
+			if (ObjectUtilty.compareDate_ddMMyyyyhhmm(now, executableDate)) {
+				executableDate = ObjectUtilty.createNextDate(TIME_TYPE.MINUTE, getDelay());
 				return true;
 			}
 		}
 		return false;
-	}
-
-	private Date nextDate(Integer delay) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.MINUTE, delay);
-		return calendar.getTime();
 	}
 
 }

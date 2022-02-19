@@ -1,6 +1,5 @@
 package com.project.security;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 
 import com.project.enums.UserRoleTYPE;
-import com.project.security.annotation.URLSecurity;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -42,7 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry configureCustomAuthorize(
 			HttpSecurity http) throws Exception {
 
-		Map<String, List<URLSecurity>> securityMap = URLSecurityConfigurer.instance().getSecurityURLMap();
+		Map<String, UserRoleTYPE[]> securityMap = URLSecurityConfigurer.instance().getURLSecurityMap();
 		ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry v = http.csrf().disable()
 				.authorizeRequests();
 
@@ -51,23 +49,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			return v;
 		}
 		for (String path : securityMap.keySet()) {
-			List<URLSecurity> securityList = securityMap.get(path);
-			for (URLSecurity security : securityList) {
-				if (security.accessType() == null || security.accessType().length == 0) {
-					v.antMatchers(path + security.url()).permitAll();
-					log.info(path + security.url() + " permited all");
-				} else {
-					String[] roleString = new String[security.accessType().length];
-					for (int i = 0; i < roleString.length; i++) {
-						roleString[i] = security.accessType()[i].getName();
-						log.info(path + security.url() + " has role for " + roleString[i]);
-					}
-					v.antMatchers(path + security.url()).hasAnyRole(roleString);
+			UserRoleTYPE[] roles = securityMap.get(path);
+			if(roles!=null && roles.length>0) {
+				String[] roleString = new String[roles.length];
+				for (int i = 0; i < roleString.length; i++) {
+					roleString[i] = roles[i].getName();
+					log.info(path  + " has role for " + roleString[i]);
 				}
+				v.antMatchers(path).hasAnyRole(roleString);
+			}else {
+				v.antMatchers(path).permitAll();
+				log.info(path + " permited all");
 			}
-			v.antMatchers("/swagger-ui/*").hasAnyRole(UserRoleTYPE.ADMIN.getName());
-
 		}
+		
+		v.antMatchers("/swagger-ui/*").hasAnyRole(UserRoleTYPE.ADMIN.getName());
+		
 		return v;
 
 	}

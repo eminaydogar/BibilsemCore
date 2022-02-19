@@ -7,11 +7,12 @@ import java.lang.annotation.Target;
 
 import com.project.enums.UserRoleTYPE;
 
+
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface URLSecurity {
 	
-	String url();
+	String url() default "";
 	UserRoleTYPE[] accessType() default {};
 
 }

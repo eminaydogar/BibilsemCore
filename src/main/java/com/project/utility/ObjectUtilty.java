@@ -1,6 +1,7 @@
 package com.project.utility;
 
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Set;
@@ -11,6 +12,8 @@ import com.project.exception.EntityValidationException;
 import com.project.exception.RequirementFieldException;
 
 public class ObjectUtilty {
+
+	private static final SimpleDateFormat DF_withNotSecondAndMillisecond = new SimpleDateFormat("ddMMyyyyhhmm");
 
 	@SuppressWarnings("deprecation")
 	public static boolean JSONValidation(Object o) throws RequirementFieldException {
@@ -61,6 +64,15 @@ public class ObjectUtilty {
 			break;
 		}
 		return calendar.getTime();
+	}
+
+	public static boolean compareDate_ddMMyyyyhhmm(Date date1, Date date2) {
+		String d1 = DF_withNotSecondAndMillisecond.format(date1);
+		String d2 = DF_withNotSecondAndMillisecond.format(date2);
+		if (d1.equals(d2)) {
+			return true;
+		}
+		return false;
 	}
 
 }

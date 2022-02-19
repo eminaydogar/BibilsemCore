@@ -54,6 +54,7 @@ public class RegisterBean extends BaseBean {
 		model.setEmail(email);
 		model.setPhoneNumber(SecureUtility.getInstance().phoneNumberCrypter(phoneNumber));
 		model.setRoles(setDefaultUserRole());
+		model.setAddress(SecureUtility.getInstance().encrypt(address));
 		model.setVertify("N");
 		return model;
 	}

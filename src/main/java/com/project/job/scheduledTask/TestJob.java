@@ -26,13 +26,7 @@ public class TestJob extends AJob {
 
 	@Override
 	protected void execute() {
-		System.out.println("---------------------------------------------------------");
-		System.out.println("TestJob JOB CALISIYOR!!!!!!!!");
-		System.out.println("CALISMA ZAMANI [" + new Date() + "]");
-		System.out.println("-----------ISLEM TAMAM------------------");
-		System.out.println("------------------delay-----------" + getDelay());
-		System.out.println("---------------------------------------------------------");
-
+		System.out.println("TestJob JOB CALISIYOR!!!!!!!!\" CALISMA ZAMANI [" + new Date() + "]");
 	}
 
 

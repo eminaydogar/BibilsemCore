@@ -17,7 +17,5 @@ public class LoginURL {
 	@URLSecurity(url = "/confirmUser")
 	public static final String confirmUser = "/confirmUser";
 	
-	@URLSecurity(url = "/test")
-	public static final String test = "/test";
 	
 }

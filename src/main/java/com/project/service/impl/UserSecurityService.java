@@ -25,7 +25,7 @@ public class UserSecurityService extends BaseService implements UserDetailsServi
 	public UserDto findByUsername(String username) {
 		UserDefinition user = select(UserDefinition.class, SQLCache.SELECT.BY_USERNAME, username);
 		if(user==null) return null;
-		return new UserDto().withOnlyRoles(user);
+		return new UserDto().withRoles(user);
 	}
 
 }

@@ -43,5 +43,12 @@ public class BBConstant {
 		public static String swagger ="/swagger-ui/";
 
 	}
+	
+	public static interface ERROR_TYPE {
+
+		public static String Job = "JOB_ERROR";
+		
+
+	}
 
 }

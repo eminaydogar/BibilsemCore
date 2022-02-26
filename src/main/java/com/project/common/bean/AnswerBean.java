@@ -1,6 +1,6 @@
-package com.project.bean;
+package com.project.common.bean;
 
-import com.project.annotation.Mandatory;
+import com.project.common.annotation.Mandatory;
 import com.project.cache.QuestionCache;
 import com.project.entity.QuestionAnswerDefinition;
 import com.project.entity.QuestionDefinition;

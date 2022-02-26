@@ -11,10 +11,12 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.stereotype.Component;
 
-import com.project.enums.UserRoleTYPE;
 import com.project.security.annotation.URLSecurity;
 import com.project.security.annotation.URLSecurityReflection;
+import com.project.security.role.RoleType;
+import com.project.utility.ObjectUtilty;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -25,15 +27,11 @@ public class URLSecurityConfigurer {
 
 	private static char slash = '/';
 
-	private static Map<String, UserRoleTYPE[]> urlSecurityMap = new HashMap<String, UserRoleTYPE[]>();
+	@Getter
+	private Map<String, RoleType[]> urlSecurityMap = new HashMap<String, RoleType[]>();
 
 	private URLSecurityConfigurer() {
-		try {
-			urlSecurityMap = getURLSecurityMap();
-		} catch (Exception e) {
-			log.error(e.getMessage());
-		}
-
+		synchronizeMap();
 	}
 
 	public static URLSecurityConfigurer instance() {
@@ -43,43 +41,44 @@ public class URLSecurityConfigurer {
 		return SINGLETON;
 	}
 
-	public Map<String, UserRoleTYPE[]> getURLSecurityMap()
-			throws ClassNotFoundException, IllegalArgumentException, IllegalAccessException {
-		if (urlSecurityMap != null && urlSecurityMap.size() > 0) {
-			return urlSecurityMap;
+	private void synchronizeMap() {
+		if (ObjectUtilty.isEmpty(urlSecurityMap)) {
+			try {
+				fillSecurityMap(getClasses());
+			} catch (IllegalArgumentException | IllegalAccessException | ClassNotFoundException e) {
+				log.error("synchronizeMap", e);
+			}
 		}
-		fillSecurityMap(getClasses());
-		return urlSecurityMap;
 	}
 
 	private void fillSecurityMap(List<Class<?>> classList) throws IllegalArgumentException, IllegalAccessException {
 		for (Class<?> c : classList) {
 			URLSecurityReflection mainVal = c.getAnnotation(URLSecurityReflection.class);
 			if (!mainVal.baseURL().equals("")) {
-				
+
 				String basePath = mainVal.baseURL();
-				
+
 				if (basePath.charAt(0) != slash) {
-					
+
 					basePath = slash + basePath;
 				}
 
 				Field[] fields = c.getDeclaredFields();
-				
+
 				for (Field field : fields) {
-					
+
 					URLSecurity val = field.getAnnotation(URLSecurity.class);
-					
+
 					if (val != null) {
-						
+
 						if (val.url() != null && !val.url().equals("")) {
-							
+
 							urlSecurityMap.put(basePath + val.url(), val.accessType());
 
 						} else {
-							
+
 							String url = (String) field.get(field);
-							
+
 							urlSecurityMap.put(basePath + url, val.accessType());
 
 						}
@@ -91,15 +90,15 @@ public class URLSecurityConfigurer {
 	}
 
 	private List<Class<?>> getClasses() throws ClassNotFoundException {
-		
+
 		List<Class<?>> clazzs = new ArrayList<Class<?>>();
-		
+
 		ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
-		
+
 		scanner.addIncludeFilter(new AnnotationTypeFilter(URLSecurityReflection.class));
-		
+
 		for (BeanDefinition bd : scanner.findCandidateComponents("com.project")) {
-			
+
 			clazzs.add(Class.forName(bd.getBeanClassName()));
 		}
 		return clazzs;

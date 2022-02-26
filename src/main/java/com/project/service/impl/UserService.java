@@ -6,17 +6,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.project.bean.LoginBean;
-import com.project.bean.RegisterBean;
-import com.project.bean.UserCouponBean;
-import com.project.bean.UserPrizeRequestBean;
-import com.project.bean.UserUpdateBean;
-import com.project.bean.UserVerificationBean;
 import com.project.cache.BBConstant.CHANNEL_TYPE;
 import com.project.cache.BBConstant.MESSAGE_TYPE;
 import com.project.cache.BBConstant.TIME_TYPE;
 import com.project.cache.BBConstant.USER_VERIFICATION_TYPE;
-import com.project.dto.UserDto;
+import com.project.common.bean.LoginBean;
+import com.project.common.bean.RegisterBean;
+import com.project.common.bean.UserCouponBean;
+import com.project.common.bean.UserPrizeRequestBean;
+import com.project.common.bean.UserUpdateBean;
+import com.project.common.bean.UserVerificationBean;
+import com.project.common.dto.UserDto;
 import com.project.entity.BBResponse;
 import com.project.entity.CouponDefinition;
 import com.project.entity.MessageDefinition;
@@ -35,8 +35,9 @@ import com.project.security.PasswordCrypter;
 import com.project.service.BaseService;
 import com.project.service.IUserService;
 import com.project.service.SQLCache;
-import com.project.utility.SecureUtility;
+import com.project.utility.LoggerUtility;
 import com.project.utility.ObjectUtilty;
+import com.project.utility.SecureUtility;
 
 @Service
 public class UserService extends BaseService implements IUserService {
@@ -72,6 +73,7 @@ public class UserService extends BaseService implements IUserService {
 
 		} catch (Exception e) {
 			logger.error("register service error --" + e.getMessage());
+			getCoreContainerService().getQueryManager().saveOrUpdate(LoggerUtility.createLoggerSQL(getClass(),"register",e));
 			response.setFaildResponse(e);
 			return response;
 		}
@@ -85,8 +87,10 @@ public class UserService extends BaseService implements IUserService {
 		response = new BBResponse<UserDto>();
 		try {
 			ObjectUtilty.JSONValidation(bean);
-			MessageDefinition message = select(MessageDefinition.class, SQLCache.SELECT.MESSAGE_DEFINITION_VERIFICATION,
-					bean.getUserId(), new Date());
+			/*MessageDefinition message = select(MessageDefinition.class, SQLCache.SELECT.MESSAGE_DEFINITION_VERIFICATION,
+					bean.getUserId(), new Date()); */
+			MessageDefinition message = getCoreContainerService().getQueryManager().get(MessageDefinition.class,
+					SQLCache.SELECT.MESSAGE_DEFINITION_VERIFICATION, bean.getUserId(), new Date());
 			if (bean.getVerificationCode().equalsIgnoreCase(message.getMessageContent())) {
 				UserDefinition user = repo.findById(bean.getUserId()).orElse(null);
 				if (user == null) {
@@ -227,9 +231,12 @@ public class UserService extends BaseService implements IUserService {
 			mailMessage.setChannelType(CHANNEL_TYPE.MAIL);
 			mailMessage.setMessageType(MESSAGE_TYPE.VERIFICATION);
 			mailMessage.setMailTo(user.getEmail());
-			getMailSender().sendMail(user.getEmail(), MailContent.registerSubject,
+			/*getMailSender().sendMail(user.getEmail(), MailContent.registerSubject,
 					MailContent.registerMessage + messageCode);
-			save(mailMessage);
+			save(mailMessage); */
+			getCoreContainerService().getMailService().sendMail(user.getEmail(), MailContent.registerSubject,
+					MailContent.registerMessage + messageCode);
+			getCoreContainerService().getQueryManager().save(mailMessage);
 		} catch (Exception e) {
 			logger.error("[verificationByMail] " + e);
 			return false;

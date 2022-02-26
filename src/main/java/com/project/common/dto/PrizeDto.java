@@ -1,4 +1,4 @@
-package com.project.dto;
+package com.project.common.dto;
 
 import java.io.Serializable;
 import java.sql.Clob;

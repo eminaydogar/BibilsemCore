@@ -1,18 +1,16 @@
 package com.project.controller.impl;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.project.bean.PrizeBean;
+import com.project.common.bean.PrizeBean;
 import com.project.controller.IPrizeController;
 import com.project.entity.BBResponse;
 import com.project.service.IPrizeService;
 import com.project.service.impl.PrizeService;
 
-import io.swagger.annotations.Api;
-@Api(tags = "Prize Service",value = "Info")
 @RestController
 public class PrizeController implements IPrizeController {
 
@@ -33,7 +31,7 @@ public class PrizeController implements IPrizeController {
 	}
 
 	@Override
-	public HashMap<String, String> refresh() {
+	public Map<String, Object> refresh() {
 		return service.cacheRefresh();
 	}
 

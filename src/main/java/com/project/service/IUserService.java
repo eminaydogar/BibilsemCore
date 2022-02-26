@@ -1,12 +1,12 @@
 package com.project.service;
 
-import com.project.bean.LoginBean;
-import com.project.bean.RegisterBean;
-import com.project.bean.UserCouponBean;
-import com.project.bean.UserPrizeRequestBean;
-import com.project.bean.UserUpdateBean;
-import com.project.bean.UserVerificationBean;
-import com.project.dto.UserDto;
+import com.project.common.bean.LoginBean;
+import com.project.common.bean.RegisterBean;
+import com.project.common.bean.UserCouponBean;
+import com.project.common.bean.UserPrizeRequestBean;
+import com.project.common.bean.UserUpdateBean;
+import com.project.common.bean.UserVerificationBean;
+import com.project.common.dto.UserDto;
 import com.project.entity.BBResponse;
 
 public interface IUserService {

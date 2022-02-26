@@ -38,13 +38,27 @@ public class Executor {
 	 */
 	// @Scheduled(cron = every1MinDelay)
 
-	@Scheduled(fixedDelay = 2000L)
+	//@Scheduled(fixedDelay = 6000L)
 	public void test() {
+		try {
+			if (!shootDown) {
+				log.info("executeEvery1Minute() start ---> " + new Date());
+				List<AJob> executableTasks = taskDefinitions.getAllTask().getTask1Min();
+				for (AJob job : executableTasks) {
+					job.run();
+				}
+			}
 
-		log.info("TEST JOB CALISIYOR------------");
+		} catch (IllegalArgumentException e) {
+			log.error(e.getMessage());
+		} catch (IllegalAccessException e) {
+			log.error(e.getMessage());
+		}
+	
 
 	}
 
+	// @Scheduled(cron = every1MinDelay)
 	public void executeEvery1Minute() {
 
 		try {

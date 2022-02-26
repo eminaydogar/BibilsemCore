@@ -4,16 +4,19 @@ import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-import com.project.annotation.Mandatory;
 import com.project.cache.BBConstant.TIME_TYPE;
+import com.project.common.annotation.Mandatory;
 import com.project.exception.EntityValidationException;
 import com.project.exception.RequirementFieldException;
 
 public class ObjectUtilty {
 
 	private static final SimpleDateFormat DF_withNotSecondAndMillisecond = new SimpleDateFormat("ddMMyyyyhhmm");
+	private static final SimpleDateFormat DF_ddMMyyyyhhmmss = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
 
 	@SuppressWarnings("deprecation")
 	public static boolean JSONValidation(Object o) throws RequirementFieldException {
@@ -29,7 +32,7 @@ public class ObjectUtilty {
 					}
 
 					if (field.get(o) == null) {
-						throw new RequirementFieldException("Request does not have enough values " + field.getName());
+						throw new RequirementFieldException("Mandatory values ​​are not entered ");
 					}
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					e.printStackTrace();
@@ -46,6 +49,23 @@ public class ObjectUtilty {
 			throw new EntityValidationException("An exception occurred in the request");
 		}
 		return entities.iterator().next();
+	}
+
+	public static boolean isEmpty(Object object) {
+		if (object == null) {
+			return true;
+		}
+		if (object instanceof String) {
+			String strObj = object.toString();
+			return strObj.trim().length() == 0;
+		} else if (object instanceof List<?>) {
+			List<?> listObj = (List<?>) object;
+			return listObj.size() == 0;
+		} else if (object instanceof Map<?, ?>) {
+			Map<?, ?> mapObj = (Map<?, ?>) object;
+			return mapObj.size() == 0;
+		}
+		return false;
 	}
 
 	public static Date createNextDate(int time, int increment) {
@@ -73,6 +93,14 @@ public class ObjectUtilty {
 			return true;
 		}
 		return false;
+	}
+
+	public static String dateToString_ddMMyyyyhhmmss(Date date) {
+		String formatDate = null;
+		if (date != null) {
+			formatDate = DF_ddMMyyyyhhmmss.format(date);
+		}
+		return formatDate;
 	}
 
 }

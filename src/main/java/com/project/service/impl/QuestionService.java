@@ -1,14 +1,16 @@
 package com.project.service.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
-import com.project.bean.QuestionBean;
 import com.project.cache.BBConstant.RECORD_STATUS;
 import com.project.cache.QuestionCache;
-import com.project.dto.QuestionDto;
+import com.project.common.bean.QuestionBean;
+import com.project.common.dto.QuestionDto;
 import com.project.entity.BBResponse;
 import com.project.entity.QuestionDefinition;
 import com.project.exception.EntityNotFoundException;
@@ -16,6 +18,7 @@ import com.project.exception.EntityValidationException;
 import com.project.repository.QuestionRepository;
 import com.project.service.BaseService;
 import com.project.service.IQuestionService;
+import com.project.utility.HandleUtil;
 import com.project.utility.ObjectUtilty;
 
 @Service
@@ -26,6 +29,25 @@ public class QuestionService extends BaseService implements IQuestionService {
 
 	public QuestionService(QuestionRepository repo) {
 		this.repo = repo;
+	}
+
+	@Override
+	public BBResponse<List<QuestionDto>> getAll() {
+		BBResponse<List<QuestionDto>> response = new BBResponse<>();
+		List<QuestionDto> messageObj = new ArrayList<QuestionDto>();
+		try {
+			List<QuestionDefinition> questionList = repo.findAllByStatus("Y");
+			for (QuestionDefinition question : questionList) {
+				messageObj.add(new QuestionDto(question));
+			}
+
+		} catch (Exception e) {
+			response.setFaildResponse(e);
+			return response;
+		}
+
+		response.setSuccessResponse(messageObj);
+		return response;
 	}
 
 	@Override
@@ -52,7 +74,7 @@ public class QuestionService extends BaseService implements IQuestionService {
 		response = new BBResponse<>();
 		QuestionDto messageObj = null;
 		try {
-			if(bean.getQuestionId()==null) {
+			if (bean.getQuestionId() == null) {
 				throw new EntityValidationException("id cannot be null");
 			}
 			QuestionDefinition question = repo.findById(bean.getQuestionId()).orElse(null);
@@ -74,18 +96,18 @@ public class QuestionService extends BaseService implements IQuestionService {
 	}
 
 	@Override
-	public HashMap<String, String> cacheRefresh() {
-		HashMap<String, String> responseMap = new HashMap<>();
+	public Map<String, Object> cacheRefresh() {
+		Map<String, Object> responseMap = new HashMap<>();
 		String messageObj = null;
 		try {
 			List<QuestionDefinition> questionList = repo.findAllByStatus("Y");
 			QuestionCache.getContext().set(questionList);
+			messageObj = "Refresh completed successfully";
+			return HandleUtil.responseHandler(responseMap, messageObj);
 		} catch (Exception e) {
 			messageObj = "Refresh fail!! Because of " + e.getMessage();
+			return HandleUtil.responseHandler(responseMap, messageObj, e);
 		}
-		messageObj = "Refresh completed successfully";
-		responseMap.put("RESULT", messageObj);
-		return responseMap;
 
 	}
 

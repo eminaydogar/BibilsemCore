@@ -2,7 +2,7 @@ package com.project.job.scheduledTask;
 
 import java.util.List;
 
-import com.project.annotation.JobDefinition;
+import com.project.common.annotation.JobDefinition;
 import com.project.job.AJob;
 import com.project.job.JobDao;
 import com.project.job.beans.CouponValidatiorBean;
@@ -20,15 +20,11 @@ public class CouponValidatorJob extends AJob {
 		identifier = 1L;
 	}
 
-	@Override
-	protected void initilazeBean() {
-		jobBean = dao.initilazer(identifier);
-	}
 
 	@Override
 	protected void execute() {
 
-		List<Object[]> results = dao.getResultList("SELECT \r\n" + "				CD.ID COUPON_ID,\r\n"
+		List<Object[]> results = dao.getQueryManager().getObjectList("SELECT \r\n" + "				CD.ID COUPON_ID,\r\n"
 				+ "				QD.ID QUESTION_ID,\r\n" + "				QAD.ANSWER_VALUE COUPON_ANSWER,\r\n"
 				+ "				QD.ANSWER QUESTION_ANSWER,\r\n" + "				UCL.USER_ID,\r\n"
 				+ "				CD.COUPON_PRICE\r\n" + "				FROM coupon_definition CD \r\n"
@@ -87,7 +83,7 @@ public class CouponValidatorJob extends AJob {
 
 	private void executeStatus(String status, Long couponId) {
 		try {
-			dao.executeUpdate("UPDATE COUPON_DEFINITION SET COUPON_STATUS = ? WHERE ID=?", status, couponId);
+			dao.getQueryManager().saveOrUpdate("UPDATE COUPON_DEFINITION SET COUPON_STATUS = ? WHERE ID=?", status, couponId);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
@@ -95,7 +91,7 @@ public class CouponValidatorJob extends AJob {
 	
 	private void executeBBPoint(Long couponPrice, Long userId) {
 		try {
-			dao.executeUpdate("UPDATE USER_DEFINITION SET bbpoint = bbpoint + ? WHERE ID=?", couponPrice, userId);
+			dao.getQueryManager().saveOrUpdate("UPDATE USER_DEFINITION SET bbpoint = bbpoint + ? WHERE ID=?", couponPrice, userId);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}

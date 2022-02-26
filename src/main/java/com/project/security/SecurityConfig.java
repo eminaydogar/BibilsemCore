@@ -10,7 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 
-import com.project.enums.UserRoleTYPE;
+import com.project.security.role.RoleType;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,16 +40,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry configureCustomAuthorize(
 			HttpSecurity http) throws Exception {
 
-		Map<String, UserRoleTYPE[]> securityMap = URLSecurityConfigurer.instance().getURLSecurityMap();
+		Map<String, RoleType[]> securityMap = URLSecurityConfigurer.instance().getUrlSecurityMap();
 		ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry v = http.csrf().disable()
 				.authorizeRequests();
 
 		if (securityMap.size() == 0) {
-			v.antMatchers(path + "api/**").hasAnyRole(UserRoleTYPE.ADMIN.getName());
+			v.antMatchers(path + "api/**").hasAnyRole(RoleType.ADMIN.getName());
 			return v;
 		}
 		for (String path : securityMap.keySet()) {
-			UserRoleTYPE[] roles = securityMap.get(path);
+			RoleType[] roles = securityMap.get(path);
 			if(roles!=null && roles.length>0) {
 				String[] roleString = new String[roles.length];
 				for (int i = 0; i < roleString.length; i++) {
@@ -63,7 +63,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			}
 		}
 		
-		v.antMatchers("/swagger-ui/*").hasAnyRole(UserRoleTYPE.ADMIN.getName());
+		v.antMatchers("/swagger-ui/*").hasAnyRole(RoleType.ADMIN.getName());
 		
 		return v;
 

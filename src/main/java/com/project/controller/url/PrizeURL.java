@@ -1,8 +1,8 @@
 package com.project.controller.url;
 
-import com.project.enums.UserRoleTYPE;
 import com.project.security.annotation.URLSecurity;
 import com.project.security.annotation.URLSecurityReflection;
+import com.project.security.role.RoleType;
 
 @URLSecurityReflection(baseURL = PrizeURL.basePath)
 public class PrizeURL {
@@ -21,15 +21,15 @@ public class PrizeURL {
 	 * static final String inactive = "/inactive";
 	 */
 	
-	@URLSecurity(accessType = {UserRoleTYPE.ADMIN})
+	@URLSecurity(accessType = {RoleType.ADMIN})
 	public static final String save = "/save";
 
-	@URLSecurity(accessType = {UserRoleTYPE.ADMIN})
+	@URLSecurity(accessType = {RoleType.ADMIN})
 	public static final String update = "/update";
 
-	@URLSecurity(accessType = {UserRoleTYPE.ADMIN})
+	@URLSecurity(accessType = {RoleType.ADMIN})
 	public static final String refresh = "/refresh";
 
-	@URLSecurity(accessType = {UserRoleTYPE.ADMIN})
+	@URLSecurity(accessType = {RoleType.ADMIN})
 	public static final String inactive = "/inactive";
 }

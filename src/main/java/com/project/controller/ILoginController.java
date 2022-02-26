@@ -4,12 +4,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.project.bean.LoginBean;
-import com.project.bean.RegisterBean;
-import com.project.bean.UserVerificationBean;
+import com.project.common.bean.LoginBean;
+import com.project.common.bean.RegisterBean;
+import com.project.common.bean.UserVerificationBean;
 import com.project.controller.url.LoginURL;
 import com.project.entity.BBResponse;
 
+import io.swagger.annotations.Api;
+
+@Api(tags = "Login Service")
 @RequestMapping(LoginURL.basePath)
 public interface ILoginController {
 

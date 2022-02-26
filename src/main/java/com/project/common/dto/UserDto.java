@@ -1,4 +1,4 @@
-package com.project.dto;
+package com.project.common.dto;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -34,13 +34,13 @@ public class UserDto implements IDto, Serializable {
 	}
 
 	public UserDto(UserDefinition user) {
-		fillSimpleDto(user);
+		setter(user);
 		this.roles = roleDtoConverter(user.getRoles());
 		this.coupons = couponDtoConverter(user.getCoupons());
 		this.prizes = prizeRequestDtoConverter(user.getPrizes());
 	}
 
-	private void fillSimpleDto(UserDefinition user) {
+	private void setter(UserDefinition user) {
 		this.id = user.getId();
 		this.username = user.getUsername();
 		this.password = user.getPassword();
@@ -50,24 +50,24 @@ public class UserDto implements IDto, Serializable {
 	}
 
 	public UserDto single(UserDefinition user) {
-		fillSimpleDto(user);
+		setter(user);
 		return this;
 	}
 
 	public UserDto withRoles(UserDefinition user) {
-		fillSimpleDto(user);
+		setter(user);
 		this.roles = roleDtoConverter(user.getRoles());
 		return this;
 	}
 
 	public UserDto withCoupons(UserDefinition user) {
-		fillSimpleDto(user);
+		setter(user);
 		this.coupons = couponDtoConverter(user.getCoupons());
 		return this;
 	}
 
 	public UserDto withPrizes(UserDefinition user) {
-		fillSimpleDto(user);
+		setter(user);
 		this.prizes = prizeRequestDtoConverter(user.getPrizes());
 		return this;
 	}

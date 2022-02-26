@@ -1,8 +1,7 @@
-package com.project.dto;
+package com.project.common.dto;
 
 import java.io.Serializable;
 
-import com.project.annotation.Mandatory;
 import com.project.entity.QuestionAnswerDefinition;
 import com.project.entity.QuestionDefinition;
 
@@ -15,11 +14,8 @@ public class QuestionAnswerDto implements IDto, Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -7862529152207825837L;
-	@Mandatory
 	private Long id;
-	@Mandatory
 	private QuestionDto question;
-	@Mandatory
 	private String answer;
 
 	public QuestionAnswerDto() {
@@ -31,7 +27,6 @@ public class QuestionAnswerDto implements IDto, Serializable {
 		this.question = questionDtoConverter(questionAnswerDefinition.getQuestion());
 		this.answer = questionAnswerDefinition.getAnswer();
 	}
-
 
 	//////////////////////////// DTO Converters /////////////////////////////////
 

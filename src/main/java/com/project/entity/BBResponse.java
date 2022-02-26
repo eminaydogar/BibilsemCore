@@ -3,6 +3,7 @@ package com.project.entity;
 import java.util.Date;
 
 import com.project.cache.BBConstant.OperationStatus;
+import com.project.exception.ServiceOperationException;
 
 import lombok.Data;
 
@@ -23,8 +24,10 @@ public class BBResponse<T> {
 	}
 
 	public void setFaildResponse(Exception e) {
+		if (e instanceof ServiceOperationException) {
+			this.message = e.getMessage();
+		}
 		this.status = OperationStatus.ERROR;
-		this.message = e.getMessage();
 		this.time=new Date();
 		this.response = null;
 

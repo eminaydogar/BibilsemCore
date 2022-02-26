@@ -1,8 +1,10 @@
-package com.project.bean;
+package com.project.common.bean;
+
+import java.util.Date;
 
 import javax.validation.constraints.NotNull;
 
-import com.project.annotation.Mandatory;
+import com.project.common.annotation.Mandatory;
 import com.project.entity.UserDefinition;
 import com.project.security.PasswordCrypter;
 import com.project.utility.SecureUtility;
@@ -55,6 +57,7 @@ public class RegisterBean extends BaseBean {
 		model.setPhoneNumber(SecureUtility.getInstance().phoneNumberCrypter(phoneNumber));
 		model.setRoles(setDefaultUserRole());
 		model.setAddress(SecureUtility.getInstance().encrypt(address));
+		model.setCdate(new Date());
 		model.setVertify("N");
 		return model;
 	}

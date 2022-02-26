@@ -1,10 +1,10 @@
-package com.project.bean;
+package com.project.common.bean;
 
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.project.annotation.Mandatory;
+import com.project.common.annotation.Mandatory;
 import com.project.entity.CouponDefinition;
 import com.project.entity.QuestionAnswerDefinition;
 import com.project.exception.EntityNotFoundException;

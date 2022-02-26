@@ -4,12 +4,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.project.bean.UserCouponBean;
-import com.project.bean.UserPrizeRequestBean;
-import com.project.bean.UserUpdateBean;
+import com.project.common.bean.UserCouponBean;
+import com.project.common.bean.UserPrizeRequestBean;
+import com.project.common.bean.UserUpdateBean;
 import com.project.controller.url.UserURL;
 import com.project.entity.BBResponse;
 
+import io.swagger.annotations.Api;
+
+
+@Api(tags = "User Service",value = "Info")
 @RequestMapping(UserURL.basePath)
 public interface IUserController {
 

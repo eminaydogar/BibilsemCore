@@ -1,10 +1,11 @@
-package com.project.bean;
+package com.project.common.bean;
 
 import java.sql.Clob;
 import java.util.Date;
 
-import com.project.annotation.Mandatory;
+
 import com.project.cache.BBConstant.RECORD_STATUS;
+import com.project.common.annotation.Mandatory;
 import com.project.entity.PrizeDefinition;
 import com.project.exception.EntityNotFoundException;
 

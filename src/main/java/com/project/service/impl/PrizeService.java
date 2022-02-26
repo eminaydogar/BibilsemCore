@@ -2,13 +2,14 @@ package com.project.service.impl;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
-import com.project.bean.PrizeBean;
 import com.project.cache.BBConstant.RECORD_STATUS;
 import com.project.cache.PrizeCache;
-import com.project.dto.PrizeDto;
+import com.project.common.bean.PrizeBean;
+import com.project.common.dto.PrizeDto;
 import com.project.entity.BBResponse;
 import com.project.entity.PrizeDefinition;
 import com.project.exception.EntityNotFoundException;
@@ -16,6 +17,7 @@ import com.project.exception.EntityValidationException;
 import com.project.repository.PrizeRepository;
 import com.project.service.BaseService;
 import com.project.service.IPrizeService;
+import com.project.utility.HandleUtil;
 import com.project.utility.ObjectUtilty;
 
 @Service
@@ -73,19 +75,19 @@ public class PrizeService extends BaseService implements IPrizeService {
 	}
 
 	@Override
-	public HashMap<String, String> cacheRefresh() {
-		HashMap<String, String> resultMap = new HashMap<>();
+	public Map<String, Object> cacheRefresh() {
+		Map<String, Object> resultMap = new HashMap<>();
 		String messageObj = null;
 		try {
 			List<PrizeDefinition> questionList = repo.findAllByStatus("Y");
 			PrizeCache.getContext().set(questionList);
+			messageObj = "Refresh completed successfully";
+			return HandleUtil.responseHandler(resultMap, messageObj);
 		} catch (Exception e) {
 			messageObj = "Refresh fail!! Because of " + e.getMessage();
+			return HandleUtil.responseHandler(resultMap, messageObj,e);
 		}
-		messageObj = "Refresh completed successfully";
-		resultMap.put("RESULT", messageObj);
-		return resultMap;
-
+		
 	}
 
 	@Override

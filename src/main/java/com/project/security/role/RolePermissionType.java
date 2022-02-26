@@ -1,6 +1,6 @@
-package com.project.enums;
+package com.project.security.role;
 
-public enum UserPermissionTYPE {
+public enum RolePermissionType {
 	READ_SELF("READ_SELF"), 
 	WRITE_SELF("WRITE_SELF"),
 	UPDDATE_SELF("UPDATE_SELF"),
@@ -11,7 +11,7 @@ public enum UserPermissionTYPE {
 
 	private final String value;
 
-	UserPermissionTYPE(String value) {
+	RolePermissionType(String value) {
 		this.value = value;
 	}
 

@@ -4,11 +4,21 @@ import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.project.cache.BBConstant.ERROR_TYPE;
 import com.project.cache.BBConstant.TIME_TYPE;
+import com.project.utility.LoggerUtility;
 import com.project.utility.ObjectUtilty;
 
+@Transactional
+@Service
 public abstract class AJob implements Runnable {
+
+	@Autowired
+	protected JobDao dao;
 
 	final static Logger LOGGER = LoggerFactory.getLogger(AJob.class);
 
@@ -20,7 +30,9 @@ public abstract class AJob implements Runnable {
 
 	protected Date executableDate;
 
-	protected abstract void initilazeBean();
+	protected void initilazeBean() {
+		this.jobBean = dao.initilazer(identifier);
+	}
 
 	protected abstract void execute();
 
@@ -53,6 +65,8 @@ public abstract class AJob implements Runnable {
 				execute();
 			}
 		} catch (Exception e) {
+			dao.getQueryManager()
+					.saveOrUpdate(LoggerUtility.createLoggerSQL(getClass(), getName(), ERROR_TYPE.Job, e, null));
 			LOGGER.error(getName() + " JOB'ında hata : [" + e + "]");
 		} finally {
 			try {

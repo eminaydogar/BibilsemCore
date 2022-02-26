@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.project.dto.UserDto;
+import com.project.common.dto.UserDto;
 import com.project.entity.UserDefinition;
 import com.project.service.BaseService;
 import com.project.service.CustomUserDetails;
@@ -23,7 +23,8 @@ public class UserSecurityService extends BaseService implements UserDetailsServi
 	}
 
 	public UserDto findByUsername(String username) {
-		UserDefinition user = select(UserDefinition.class, SQLCache.SELECT.BY_USERNAME, username);
+	//	UserDefinition user = select(UserDefinition.class, SQLCache.SELECT.BY_USERNAME, username);
+		UserDefinition user = getCoreContainerService().getQueryManager().get(UserDefinition.class, SQLCache.SELECT.BY_USERNAME, username);
 		if(user==null) return null;
 		return new UserDto().withRoles(user);
 	}

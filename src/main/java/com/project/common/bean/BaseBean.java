@@ -1,12 +1,12 @@
-package com.project.bean;
+package com.project.common.bean;
 
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 import com.project.entity.RoleDefinition;
-import com.project.enums.UserRoleTYPE;
 import com.project.exception.EntityNotFoundException;
+import com.project.security.role.RoleType;
 
 public abstract class BaseBean implements Serializable{
 
@@ -19,7 +19,7 @@ public abstract class BaseBean implements Serializable{
 	
 	protected Set<RoleDefinition> setDefaultUserRole(){
 		Set<RoleDefinition> roles = new HashSet<RoleDefinition>();
-		RoleDefinition role = new RoleDefinition(UserRoleTYPE.USER.getId(), UserRoleTYPE.USER.getName());
+		RoleDefinition role = new RoleDefinition(RoleType.USER.getId(), RoleType.USER.getName());
 		roles.add(role);
 		return roles;
 	}

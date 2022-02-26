@@ -6,9 +6,10 @@ import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.project.dto.RoleDto;
-import com.project.dto.UserDto;
+import com.project.common.dto.RoleDto;
+import com.project.common.dto.UserDto;
 
 
 

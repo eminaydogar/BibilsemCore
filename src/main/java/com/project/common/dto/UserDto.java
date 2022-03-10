@@ -24,7 +24,7 @@ public class UserDto implements IDto, Serializable {
 	private String password;
 	private String email;
 	private Long phoneNumber;
-	private Long bbPoint;
+	private Double bbPoint;
 	private String isBlackList;
 	private Set<RoleDto> roles;
 	private Set<CouponDto> coupons;

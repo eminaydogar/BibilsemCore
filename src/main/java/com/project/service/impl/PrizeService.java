@@ -1,5 +1,6 @@
 package com.project.service.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,23 @@ public class PrizeService extends BaseService implements IPrizeService {
 
 	public PrizeService(PrizeRepository repo) {
 		this.repo = repo;
+	}
+
+	@Override
+	public BBResponse<List<PrizeDto>> getAll() {
+		BBResponse<List<PrizeDto>> response = new BBResponse<>();
+		List<PrizeDto> prizeDtoList = new ArrayList<PrizeDto>();
+		try {
+			List<PrizeDefinition> prizeList = repo.findAllByStatus("Y");
+			for (PrizeDefinition prize : prizeList) {
+				prizeDtoList.add(new PrizeDto(prize));
+			}
+		} catch (Exception e) {
+			response.setFaildResponse(e);
+			return response;
+		}
+		response.setSuccessResponse(prizeDtoList);
+		return response;
 	}
 
 	@Override
@@ -85,9 +103,9 @@ public class PrizeService extends BaseService implements IPrizeService {
 			return HandleUtil.responseHandler(resultMap, messageObj);
 		} catch (Exception e) {
 			messageObj = "Refresh fail!! Because of " + e.getMessage();
-			return HandleUtil.responseHandler(resultMap, messageObj,e);
+			return HandleUtil.responseHandler(resultMap, messageObj, e);
 		}
-		
+
 	}
 
 	@Override

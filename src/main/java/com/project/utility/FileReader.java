@@ -70,7 +70,7 @@ public class FileReader {
 
 					if (node.getNodeType() == Node.ELEMENT_NODE) {
 						log.info(
-								"key: " + node.getNodeName() + " value: " + node.getTextContent() + " eklendi");
+								"key: [" + node.getNodeName() + "] || value: [" + node.getTextContent() + "] added map");
 						map.put(node.getNodeName(), node.getTextContent().trim());
 					}
 				}

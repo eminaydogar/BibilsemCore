@@ -1,3 +1,4 @@
+package com.project.queue.rabbit;
 /*
  * package com.project.queue;
  * 

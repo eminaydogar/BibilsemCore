@@ -43,10 +43,10 @@ public class CouponDefinition {
 	private String status;
 	
 	@Column(name = "coupon_price")
-	private Long price;
+	private Double price;
 
 	@Column(name = "coupon_amount")
-	private Long amount;
+	private Double amount;
 	
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinTable(name = "coupon_question_answer_list", joinColumns = { @JoinColumn(name = "coupon_id") }, inverseJoinColumns = {

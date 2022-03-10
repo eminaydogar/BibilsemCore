@@ -28,10 +28,10 @@ public class QuestionDefinition {
 	private String questionText;
 
 	@Column(name = "yes_price", nullable = false)
-	private Long yesPrice;
+	private Double yesPrice;
 
 	@Column(name = "no_price", nullable = false)
-	private Long noPrice;
+	private Double noPrice;
 
 	@Column(name = "sdate", nullable = false)
 	private Date sdate;

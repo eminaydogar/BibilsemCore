@@ -73,7 +73,7 @@ public class UserService extends BaseService implements IUserService {
 
 		} catch (Exception e) {
 			logger.error("register service error --" + e.getMessage());
-			getCoreContainerService().getQueryManager().saveOrUpdate(LoggerUtility.createLoggerSQL(getClass(),"register",e));
+			getCoreContainerService().getCoreManager().saveOrUpdate(LoggerUtility.createLoggerSQL(getClass(),"register",e));
 			response.setFaildResponse(e);
 			return response;
 		}
@@ -89,7 +89,7 @@ public class UserService extends BaseService implements IUserService {
 			ObjectUtilty.JSONValidation(bean);
 			/*MessageDefinition message = select(MessageDefinition.class, SQLCache.SELECT.MESSAGE_DEFINITION_VERIFICATION,
 					bean.getUserId(), new Date()); */
-			MessageDefinition message = getCoreContainerService().getQueryManager().get(MessageDefinition.class,
+			MessageDefinition message = getCoreContainerService().getCoreManager().get(MessageDefinition.class,
 					SQLCache.SELECT.MESSAGE_DEFINITION_VERIFICATION, bean.getUserId(), new Date());
 			if (bean.getVerificationCode().equalsIgnoreCase(message.getMessageContent())) {
 				UserDefinition user = repo.findById(bean.getUserId()).orElse(null);
@@ -236,7 +236,7 @@ public class UserService extends BaseService implements IUserService {
 			save(mailMessage); */
 			getCoreContainerService().getMailService().sendMail(user.getEmail(), MailContent.registerSubject,
 					MailContent.registerMessage + messageCode);
-			getCoreContainerService().getQueryManager().save(mailMessage);
+			getCoreContainerService().getCoreManager().save(mailMessage);
 		} catch (Exception e) {
 			logger.error("[verificationByMail] " + e);
 			return false;
@@ -256,7 +256,7 @@ public class UserService extends BaseService implements IUserService {
 
 	private boolean balanceInquiry(UserDefinition user, CouponDefinition coupon) throws ServiceOperationException {
 		if (user.getBbPoint() > coupon.getAmount()) {
-			Long newBalance = user.getBbPoint() - coupon.getAmount();
+			Double newBalance = user.getBbPoint() - coupon.getAmount();
 			user.setBbPoint(newBalance);
 			return true;
 		}
@@ -270,7 +270,7 @@ public class UserService extends BaseService implements IUserService {
 			throw new EntityNotFoundException("Prize not found");
 		}
 		if (user.getBbPoint() > prize.getPrice()) {
-			Long newBalance = user.getBbPoint() - prize.getPrice();
+			Double newBalance = user.getBbPoint() - prize.getPrice();
 			user.setBbPoint(newBalance);
 			return true;
 		}
@@ -280,7 +280,7 @@ public class UserService extends BaseService implements IUserService {
 	}
 
 	private boolean inconsistentBalance(CouponDefinition coupon) throws EntityValidationException {
-		Long totalPrice = 1L;
+		Double totalPrice = 1D;
 		for (QuestionAnswerDefinition answer : coupon.getDetails()) {
 			QuestionDefinition question = answer.getQuestion();
 			if (answer.getAnswer().equalsIgnoreCase("Y")) {

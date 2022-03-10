@@ -35,12 +35,12 @@ public class UserCouponBean extends BaseBean {
 	@Getter
 	@Setter
 	@Mandatory
-	private Long couponAmount;
+	private Double couponAmount;
 	
 	@Getter
 	@Setter
 	@Mandatory
-	private Long couponPrice;
+	private Double couponPrice;
 
 	@Getter
 	@Setter
@@ -72,7 +72,7 @@ public class UserCouponBean extends BaseBean {
 		return model;
 	}
 	
-	protected Set<QuestionAnswerDefinition> setAnswerBeans(Set<AnswerBean> beanList) throws EntityNotFoundException{
+	private Set<QuestionAnswerDefinition> setAnswerBeans(Set<AnswerBean> beanList) throws EntityNotFoundException{
 		Set<QuestionAnswerDefinition> answers = new HashSet<QuestionAnswerDefinition>();
 		for(AnswerBean answer:beanList) {
 			answers.add(answer.toEntity());

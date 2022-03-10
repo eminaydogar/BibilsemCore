@@ -46,7 +46,7 @@ public class UserDefinition {
 	private String address;
 	
 	@Column(name="bbpoint",nullable = false,length = 100000000)
-	private Long bbPoint;
+	private Double bbPoint;
 	
 	@Column(name="is_black_list")
 	private String isBlackList;

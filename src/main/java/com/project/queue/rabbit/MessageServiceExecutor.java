@@ -1,4 +1,4 @@
-package com.project.queue;
+package com.project.queue.rabbit;
 
 public class MessageServiceExecutor {
 

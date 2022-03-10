@@ -8,23 +8,28 @@ import javax.transaction.Transactional;
 
 import org.springframework.transaction.annotation.Propagation;
 
-import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Transactional
 @Slf4j
-public class QueryManager implements IQueryManager{
-	
+public class CoreManager implements ICoreManager {
+
 	@Setter
-	@Getter
 	private EntityManager manager;
-	
-	public QueryManager() {
+
+	public CoreManager() {
 	}
-	
-	public QueryManager(EntityManager managaer) {
-		this.manager=managaer;
+
+	public CoreManager(EntityManager managaer) {
+		this.manager = managaer;
+	}
+
+	public boolean isSessionActive() {
+		if (manager != null || manager.getTransaction().isActive()) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -38,13 +43,37 @@ public class QueryManager implements IQueryManager{
 		}
 
 	}
-	
+
+	@Override
+	@org.springframework.transaction.annotation.Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void update(Object entity) {
+		try {
+			manager.merge(entity);
+		} catch (Exception e) {
+			log.error("(merge)" + e);
+			manager.getTransaction().rollback();
+		}
+
+	}
+
+	@Override
+	public <T> T findById(Class<T> clazz, Long id) {
+		T result = null;
+		try {
+			result = manager.find(clazz, id);
+		} catch (Exception e) {
+			log.error("(findById)" + e);
+		}
+		return result;
+
+	}
+
 	@Override
 	@org.springframework.transaction.annotation.Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void saveOrUpdate(String sql, Object... params) {
 		try {
 			Query query = manager.createNativeQuery(sql);
-			if(params!=null) {
+			if (params != null) {
 				for (int i = 1; i <= params.length; i++) {
 					query.setParameter(i, params[i - 1]);
 				}
@@ -56,11 +85,11 @@ public class QueryManager implements IQueryManager{
 		}
 
 	}
-	
+
 	@Override
 	@org.springframework.transaction.annotation.Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void saveOrUpdate(String sql) {
-		saveOrUpdate(sql,null);
+		saveOrUpdate(sql, null);
 	}
 
 	@org.springframework.transaction.annotation.Transactional
@@ -69,7 +98,7 @@ public class QueryManager implements IQueryManager{
 		T result = null;
 		try {
 			Query query = manager.createNativeQuery(sql, clazz);
-			if(params!=null) {
+			if (params != null) {
 				for (int i = 1; i <= params.length; i++) {
 					query.setParameter(i, params[i - 1]);
 				}
@@ -81,7 +110,7 @@ public class QueryManager implements IQueryManager{
 		return result;
 
 	}
-	
+
 	@Override
 	@org.springframework.transaction.annotation.Transactional
 	@SuppressWarnings("unchecked")
@@ -89,7 +118,7 @@ public class QueryManager implements IQueryManager{
 		List<T> result = null;
 		try {
 			Query query = manager.createNativeQuery(sql, clazz);
-			if(params!=null) {
+			if (params != null) {
 				for (int i = 1; i <= params.length; i++) {
 					query.setParameter(i, params[i - 1]);
 				}
@@ -101,14 +130,14 @@ public class QueryManager implements IQueryManager{
 		return result;
 
 	}
-	
+
 	@Override
 	@org.springframework.transaction.annotation.Transactional
 	public Object[] getObject(String sql, Object... params) {
 		Object[] result = null;
 		try {
 			Query query = manager.createNativeQuery(sql);
-			if(params!=null) {
+			if (params != null) {
 				for (int i = 1; i <= params.length; i++) {
 					query.setParameter(i, params[i - 1]);
 				}
@@ -119,7 +148,7 @@ public class QueryManager implements IQueryManager{
 		}
 		return result;
 	}
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
 	@org.springframework.transaction.annotation.Transactional
@@ -127,7 +156,7 @@ public class QueryManager implements IQueryManager{
 		List<Object[]> result = null;
 		try {
 			Query query = manager.createNativeQuery(sql);
-			if(params!=null) {
+			if (params != null) {
 				for (int i = 1; i <= params.length; i++) {
 					query.setParameter(i, params[i - 1]);
 				}
@@ -138,4 +167,5 @@ public class QueryManager implements IQueryManager{
 		}
 		return result;
 	}
+
 }

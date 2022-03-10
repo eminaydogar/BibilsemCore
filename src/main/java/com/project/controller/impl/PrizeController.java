@@ -40,4 +40,9 @@ public class PrizeController implements IPrizeController {
 		return service.inactive(id);
 	}
 
+	@Override
+	public BBResponse<?> getAll() {
+		return service.getAll();
+	}
+
 }

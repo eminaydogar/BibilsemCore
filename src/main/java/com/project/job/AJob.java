@@ -65,7 +65,7 @@ public abstract class AJob implements Runnable {
 				execute();
 			}
 		} catch (Exception e) {
-			dao.getQueryManager()
+			dao.getCoreManager()
 					.saveOrUpdate(LoggerUtility.createLoggerSQL(getClass(), getName(), ERROR_TYPE.Job, e, null));
 			LOGGER.error(getName() + " JOB'ında hata : [" + e + "]");
 		} finally {

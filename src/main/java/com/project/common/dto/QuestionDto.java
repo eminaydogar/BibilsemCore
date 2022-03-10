@@ -19,9 +19,9 @@ public class QuestionDto implements IDto, Serializable {
 
 	private String questionText;
 
-	private Long yesPrice;
+	private Double yesPrice;
 
-	private Long noPrice;
+	private Double noPrice;
 
 	private Date sdate;
 
@@ -42,6 +42,7 @@ public class QuestionDto implements IDto, Serializable {
 		this.sdate = questionDefinition.getSdate();
 		this.edate = questionDefinition.getEdate();
 		this.status = questionDefinition.getStatus();
+		this.answer=questionDefinition.getAnswer();
 	}
 
 

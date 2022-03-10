@@ -8,8 +8,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import com.project.service.impl.UserSecurityService;
-
+import com.project.security.service.UserSecurityService;
 
 import lombok.extern.slf4j.Slf4j;
 

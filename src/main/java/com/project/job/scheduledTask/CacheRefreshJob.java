@@ -25,7 +25,7 @@ public class CacheRefreshJob extends AJob {
 		try {
 			String activeQuestionSQL = "Select * from question_definition where status='Y'";
 			List<QuestionDefinition> questionDefinitionList = 
-					dao.getQueryManager().getList(QuestionDefinition.class,activeQuestionSQL,null);
+					dao.getCoreManager().getList(QuestionDefinition.class,activeQuestionSQL,null);
 			if (questionDefinitionList != null && questionDefinitionList.size() > 0) {
 				QuestionCache.getContext().set(questionDefinitionList);
 			}

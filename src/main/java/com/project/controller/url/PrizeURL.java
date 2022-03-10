@@ -32,4 +32,7 @@ public class PrizeURL {
 
 	@URLSecurity(accessType = {RoleType.ADMIN})
 	public static final String inactive = "/inactive";
+	
+	@URLSecurity(accessType = {RoleType.ADMIN,RoleType.USER})
+	public static final String getAll = "/getAll";
 }

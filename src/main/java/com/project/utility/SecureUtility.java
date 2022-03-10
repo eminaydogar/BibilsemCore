@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class SecureUtility {
-//	private static byte[] byteArray = { 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1 };
 
 	private final String configFileName = "secure.xml";
 
@@ -47,7 +46,7 @@ public class SecureUtility {
 		pwd = map.get("pwd");
 		salt = map.get("salt");
 		algorithm = map.get("algorithm");
-		byteArray = byteStringTobyteArray(map.get("byteArray"));
+		byteArray = byteStringToByteArray(map.get("byteArray"));
 
 	}
 
@@ -55,7 +54,7 @@ public class SecureUtility {
 		instance = new SecureUtility();
 	}
 
-	private byte[] byteStringTobyteArray(String byteString) {
+	private byte[] byteStringToByteArray(String byteString) {
 		String[] byteStringArray = byteString.split(",");
 		byte[] array = new byte[byteStringArray.length];
 		int c = 0;

@@ -52,7 +52,7 @@ public class RegisterBean extends BaseBean {
 		UserDefinition model = new UserDefinition();
 		model.setUsername(username);
 		model.setPassword(PasswordCrypter.instance().encode(password));
-		model.setBbPoint(1000L);
+		model.setBbPoint(1000D);
 		model.setEmail(email);
 		model.setPhoneNumber(SecureUtility.getInstance().phoneNumberCrypter(phoneNumber));
 		model.setRoles(setDefaultUserRole());

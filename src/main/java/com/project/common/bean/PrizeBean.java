@@ -1,8 +1,6 @@
 package com.project.common.bean;
 
-import java.sql.Clob;
 import java.util.Date;
-
 
 import com.project.cache.BBConstant.RECORD_STATUS;
 import com.project.common.annotation.Mandatory;
@@ -30,7 +28,7 @@ public class PrizeBean extends BaseBean {
 
 	@Getter
 	@Setter
-	private Clob prizeImage;
+	private String prizeImage;
 
 	@Getter
 	@Setter

@@ -18,6 +18,12 @@ import io.swagger.annotations.Api;
 @Api(tags = "Prize Service",value = "Info")
 @RequestMapping(PrizeURL.basePath)
 public interface IPrizeController {
+	
+	
+	@GetMapping(value=PrizeURL.getAll)
+	BBResponse<?> getAll();
+
+	
 	@PostMapping(value = PrizeURL.save)
 	BBResponse<?> save(@RequestBody PrizeBean bean);
 

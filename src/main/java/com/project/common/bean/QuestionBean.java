@@ -2,6 +2,7 @@ package com.project.common.bean;
 
 import java.util.Date;
 
+import com.project.cache.BBConstant.RECORD_STATUS;
 import com.project.common.annotation.Mandatory;
 import com.project.entity.QuestionDefinition;
 
@@ -24,11 +25,11 @@ public class QuestionBean extends BaseBean{
 	@Getter
 	@Setter
 	@Mandatory
-	private Long yesPrice;
+	private Double yesPrice;
 	@Getter
 	@Setter
 	@Mandatory
-	private Long noPrice;
+	private Double noPrice;
 	@Getter
 	@Setter
 	private Date sdate;
@@ -41,19 +42,18 @@ public class QuestionBean extends BaseBean{
 	private String status;
 	@Getter
 	@Setter
-	@Mandatory
 	private String answer;
 
 	@Override
 	public QuestionDefinition toEntity() {
 		QuestionDefinition model = new QuestionDefinition();
 		model.setId(questionId);
-		model.setAnswer(answer);
+		model.setSdate(new Date());
 		model.setEdate(edate);
 		model.setNoPrice(noPrice);
 		model.setYesPrice(yesPrice);
 		model.setQuestionText(questionText);
-		model.setStatus("Y");
+		model.setStatus(RECORD_STATUS.OK);
 		return model;
 	}
 

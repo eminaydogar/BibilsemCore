@@ -1,7 +1,6 @@
 package com.project.common.dto;
 
 import java.io.Serializable;
-import java.sql.Clob;
 
 import com.project.entity.PrizeDefinition;
 
@@ -23,7 +22,7 @@ public class PrizeDto implements IDto,Serializable  {
 	
 	private String prizeName;
 	
-	private Clob prizeImage;
+	private String prizeImage;
 	
 	private Long price;
 	

@@ -8,7 +8,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.project.common.business.QueryManager;
+import com.project.common.business.CoreManager;
 import com.project.mail.EmailService;
 
 import lombok.Getter;
@@ -21,7 +21,7 @@ public class CoreContainerService {
 	private EntityManager manager;
 	
 	@Getter
-	private final QueryManager queryManager = new QueryManager();
+	private final CoreManager coreManager = new CoreManager();
 	
 	@Getter
 	@Autowired
@@ -29,7 +29,7 @@ public class CoreContainerService {
 
 	@PostConstruct
 	void init() {
-		queryManager.setManager(manager);
+		coreManager.setManager(manager);
 	}
 	
 	

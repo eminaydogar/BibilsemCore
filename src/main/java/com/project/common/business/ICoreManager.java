@@ -2,7 +2,7 @@ package com.project.common.business;
 
 import java.util.List;
 
-public interface IQueryManager {
+public interface ICoreManager {
 
 	public void save(Object entity);
 
@@ -17,5 +17,9 @@ public interface IQueryManager {
 	public Object getObject(String sql, Object... params);
 
 	public Object getObjectList(String sql, Object... params);
+
+	void update(Object entity);
+
+	<T> T findById(Class<T> clazz, Long id);
 
 }

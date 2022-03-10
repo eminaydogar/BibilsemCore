@@ -22,8 +22,8 @@ public class CouponDto implements IDto, Serializable {
 	private Date sdate;
 	private Date edate;
 	private String status;
-	private Long price;
-	private Long amount;
+	private Double price;
+	private Double amount;
 	
 	
 	private Set<QuestionAnswerDto> details;

@@ -16,21 +16,28 @@ import lombok.Getter;
 @Service
 @Transactional
 public class CoreContainerService {
-	
+
 	@PersistenceContext
 	private EntityManager manager;
-	
+
 	@Getter
 	private final CoreManager coreManager = new CoreManager();
-	
+
 	@Getter
 	@Autowired
 	private EmailService mailService;
 
+	@Getter
+	@Autowired
+	private LoggerService loggerService;
+
 	@PostConstruct
 	void init() {
 		coreManager.setManager(manager);
+		loggerService.setCoreManager(coreManager);
+
 	}
-	
-	
+
+
+
 }

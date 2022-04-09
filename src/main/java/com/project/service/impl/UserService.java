@@ -1,6 +1,10 @@
 package com.project.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +14,7 @@ import com.project.cache.BBConstant.CHANNEL_TYPE;
 import com.project.cache.BBConstant.MESSAGE_TYPE;
 import com.project.cache.BBConstant.TIME_TYPE;
 import com.project.cache.BBConstant.USER_VERIFICATION_TYPE;
+import com.project.common.bean.AnswerBean;
 import com.project.common.bean.LoginBean;
 import com.project.common.bean.RegisterBean;
 import com.project.common.bean.UserCouponBean;
@@ -37,6 +42,7 @@ import com.project.service.IUserService;
 import com.project.service.SQLCache;
 import com.project.utility.LoggerUtility;
 import com.project.utility.ObjectUtilty;
+import com.project.utility.QueryBuilder;
 import com.project.utility.SecureUtility;
 
 @Service
@@ -73,7 +79,8 @@ public class UserService extends BaseService implements IUserService {
 
 		} catch (Exception e) {
 			logger.error("register service error --" + e.getMessage());
-			getCoreContainerService().getCoreManager().saveOrUpdate(LoggerUtility.createLoggerSQL(getClass(),"register",e));
+			getCoreContainerService().getCoreManager()
+					.saveOrUpdate(LoggerUtility.createLoggerSQL(getClass(), "register", e));
 			response.setFaildResponse(e);
 			return response;
 		}
@@ -87,8 +94,11 @@ public class UserService extends BaseService implements IUserService {
 		response = new BBResponse<UserDto>();
 		try {
 			ObjectUtilty.JSONValidation(bean);
-			/*MessageDefinition message = select(MessageDefinition.class, SQLCache.SELECT.MESSAGE_DEFINITION_VERIFICATION,
-					bean.getUserId(), new Date()); */
+			/*
+			 * MessageDefinition message = select(MessageDefinition.class,
+			 * SQLCache.SELECT.MESSAGE_DEFINITION_VERIFICATION, bean.getUserId(), new
+			 * Date());
+			 */
 			MessageDefinition message = getCoreContainerService().getCoreManager().get(MessageDefinition.class,
 					SQLCache.SELECT.MESSAGE_DEFINITION_VERIFICATION, bean.getUserId(), new Date());
 			if (bean.getVerificationCode().equalsIgnoreCase(message.getMessageContent())) {
@@ -150,6 +160,7 @@ public class UserService extends BaseService implements IUserService {
 				throw new EntityNotFoundException("Entity not found.");
 			}
 			CouponDefinition coupon = bean.toEntity();
+			fillQuestionAnswers(bean, coupon);
 			balanceInquiry(user, coupon);
 			inconsistentBalance(coupon);
 			user.getCoupons().add(coupon);
@@ -174,6 +185,7 @@ public class UserService extends BaseService implements IUserService {
 				throw new EntityNotFoundException("Entity not found.");
 			}
 			PrizeRequestDefinition prizeRequest = bean.toEntity();
+			fillPrize(bean, prizeRequest);
 			balanceInquiry(user, prizeRequest.getPrize());
 			user.getPrizes().add(prizeRequest);
 			user = repo.saveAndFlush(user);
@@ -207,7 +219,31 @@ public class UserService extends BaseService implements IUserService {
 		return response;
 	}
 
+	@Override
+	public BBResponse<List<UserDto>> findWealthyUsers() {
+		BBResponse<List<UserDto>> response = null;
+		List<UserDto> resultList = new ArrayList<UserDto>();
+		try {
 
+			response = new BBResponse<>();
+			List<UserDefinition> userList = repo.findTop3ByOrderByBbPointDesc();
+			for (UserDefinition user : userList) {
+				UserDto resultUser = new UserDto().single(user);
+				resultUser.setPassword(null);
+				resultUser.setPhoneNumber(null);
+				resultUser.setEmail(null);
+				resultUser.setId(null);
+				resultList.add(resultUser);
+			}
+			response.setSuccessResponse(resultList);
+
+		} catch (Exception e) {
+			logger.error("findWealthyUsers error", e);
+			response.setFaildResponse(e);
+		}
+
+		return response;
+	}
 
 	//////////////////////////////////////////// SERVICE @Override
 	//////////////////////////////////////////// FINISHED////////////////////////////////////////////////////////////////////////////////
@@ -231,9 +267,10 @@ public class UserService extends BaseService implements IUserService {
 			mailMessage.setChannelType(CHANNEL_TYPE.MAIL);
 			mailMessage.setMessageType(MESSAGE_TYPE.VERIFICATION);
 			mailMessage.setMailTo(user.getEmail());
-			/*getMailSender().sendMail(user.getEmail(), MailContent.registerSubject,
-					MailContent.registerMessage + messageCode);
-			save(mailMessage); */
+			/*
+			 * getMailSender().sendMail(user.getEmail(), MailContent.registerSubject,
+			 * MailContent.registerMessage + messageCode); save(mailMessage);
+			 */
 			getCoreContainerService().getMailService().sendMail(user.getEmail(), MailContent.registerSubject,
 					MailContent.registerMessage + messageCode);
 			getCoreContainerService().getCoreManager().save(mailMessage);
@@ -246,7 +283,7 @@ public class UserService extends BaseService implements IUserService {
 	}
 
 	private UserDefinition findByIdAuthorization(Long id) throws AuthorizationException {
-		if(id==null) {
+		if (id == null) {
 			return null;
 		}
 		UserDefinition user = repo.findById(id).orElse(null);
@@ -294,7 +331,7 @@ public class UserService extends BaseService implements IUserService {
 		}
 		return true;
 	}
-	
+
 	private void fillEntity4Update(UserUpdateBean bean, UserDefinition user) {
 		if (bean.getEmail() != null) {
 			user.setEmail(bean.getEmail());
@@ -314,196 +351,45 @@ public class UserService extends BaseService implements IUserService {
 
 	}
 
-	// first select in UserService for authenticate
+	private void fillQuestionAnswers(UserCouponBean bean, CouponDefinition coupon) throws ServiceOperationException {
+		Long[] questionIds = new Long[bean.getAnswers().size()];
+		int counter = 0;
+		for (AnswerBean answerBean : bean.getAnswers()) {
+			questionIds[counter] = answerBean.getQuestionId();
+			counter++;
+		}
+		QueryBuilder queryBuilder = new QueryBuilder("Select * from question_definition where status='Y' and id=? ");
+		queryBuilder.setParams(questionIds);
+		List<QuestionDefinition> questionDefinitionList = getCoreContainerService().getCoreManager()
+				.getList(QuestionDefinition.class, queryBuilder.toString());
+		if (questionDefinitionList == null || questionDefinitionList.size() != bean.getAnswers().size()) {
+			throw new ServiceOperationException("Soru listesinde pasif kayıtlar mevcut");
+		}
+		Set<QuestionAnswerDefinition> questionAnswerEntity = new HashSet<QuestionAnswerDefinition>();
+		for (AnswerBean answerBean : bean.getAnswers()) {
+			for (QuestionDefinition question : questionDefinitionList) {
+				if (answerBean.getQuestionId() == question.getId()) {
+					QuestionAnswerDefinition answerDefinition = new QuestionAnswerDefinition();
+					answerDefinition.setAnswer(answerBean.getAnswer());
+					answerDefinition.setQuestion(question);
+					questionAnswerEntity.add(answerDefinition);
+					break;
+				}
+
+			}
+		}
+		coupon.setDetails(questionAnswerEntity);
+
+	}
+
+	private void fillPrize(UserPrizeRequestBean bean, PrizeRequestDefinition prizeRequest)
+			throws EntityNotFoundException {
+		PrizeDefinition prize = getCoreContainerService().getCoreManager().get(PrizeDefinition.class,
+				"Select * from prize_definition where status ='Y' and id=?", bean.getPrizeId());
+		if (prize == null) {
+			throw new EntityNotFoundException("Aktif hediye kaydı bulunamadı");
+		}
+		prizeRequest.setPrize(prize);
+	}
 
 }
-
-/*
- * @Override public BBResponse<UserDto> execute(OperationCODE operationCode,
- * Object request) { response = new BBResponse<UserDto>(); UserDto userDto =
- * null;
- * 
- * try {
- * 
- * switch (operationCode) { case USER_SELECT: Long id = (Long) request; userDto
- * = userSelect(id); break; case USER_INSERT: UserDto insert = (UserDto)
- * request; userDto = userInsert(insert); break; case USER_UPDATE: UserDto
- * update = (UserDto) request; userDto = userUpdate(update); break; case
- * USER_DELETE: UserDto delete = (UserDto) request; userDto =
- * userDelete(delete); break; case USER_COUPON_UPDATE: UserDto couponUpdate =
- * (UserDto) request; userDto = userCouponUpdate(couponUpdate); break; case
- * USER_ROLE_UPDATE: UserDto roleUpdate = (UserDto) request; userDto =
- * userRoleUpdate(roleUpdate); break; case USER_PRIZE_UPDATE: UserDto
- * prizeUpdate = (UserDto) request; userDto = userPrizeUpdate(prizeUpdate);
- * break; default: break; }
- * 
- * } catch (Exception e) { response.setFaildResponse(e); return response; }
- * 
- * response.setSuccessResponse(userDto); return response; }
- * 
- * 
- * /* // first select in UserService for authenticate
- * 
- * @Override public UserDetails loadUserByUsername(String username) throws
- * UsernameNotFoundException { UserDto user = findByUsername(username); if (user
- * == null) throw new UsernameNotFoundException("User not found"); userDetails =
- * new CustomUserDetails(user); return userDetails;
- * 
- * }
- * 
- * private UserDto findByUsername(String username) { UserDefinition user =
- * dao.findByUsername(username); return new UserDto(user, false, false);
- * 
- * }
- * 
- * private UserDto userCouponUpdate(UserDto requestDto) throws
- * AuthorizationException, EntityValidationException, RequirementFieldException,
- * EntityNotFoundException {
- * 
- * UserDto dtoExist = selectUserWithAuthorizationControl(requestDto.getId());
- * CouponDto couponDto = DTOUtilty.forceSingleEntity(requestDto.getCoupons());
- * validateCoupon(dtoExist, couponDto); dtoExist.addCoupon(couponDto);
- * UserDefinition user = dtoExist.toEntity(); user = dao.update(user); return
- * new UserDto(user, true, false); }
- * 
- * private UserDto userUpdate(UserDto requestDto) throws AuthorizationException,
- * EntityNotFoundException { UserDto dtoExist =
- * selectUserWithAuthorizationControl(requestDto.getId());
- * dtoExist.setEmail(requestDto.getEmail());
- * dtoExist.setPhoneNumber(requestDto.getPhoneNumber());
- * dtoExist.setIsBlackList(requestDto.getIsBlackList());
- * dtoExist.setPassword(requestDto.getPassword()); UserDefinition user =
- * dtoExist.toEntity(); user = dao.update(user); return new UserDto(user, false,
- * false); }
- * 
- * private UserDto userSelect(String username) throws AuthorizationException,
- * EntityNotFoundException { UserDefinition user = dao.findByUsername(username);
- * if (user == null) { throw new EntityNotFoundException("User not found"); }
- * UserDto userDto = new UserDto(user); return userDto; }
- * 
- * private UserDto userSelect(Long id) throws AuthorizationException,
- * EntityNotFoundException { UserDefinition user = dao.select(id); if (user ==
- * null) { throw new EntityNotFoundException("User not found"); } UserDto
- * userDto = new UserDto(user); return userDto; }
- * 
- * // only admin private UserDto userInsert(UserDto requestDto) { UserDefinition
- * newUser = requestDto.toEntity(); newUser = dao.insert(newUser); return new
- * UserDto(newUser, false, false); }
- * 
- * // only admin private UserDto userRoleUpdate(UserDto requestDto) throws
- * AuthorizationException, RequirementFieldException, EntityNotFoundException {
- * DTOUtilty.JSONValidation(requestDto); UserDto dtoExist =
- * selectUserWithAuthorizationControl(requestDto.getId());
- * dtoExist.setRoles(requestDto.getRoles()); UserDefinition user =
- * dtoExist.toEntity(); user = dao.update(user); return new UserDto(user, false,
- * false); }
- * 
- * private UserDto userPrizeUpdate(UserDto userDto) throws
- * EntityValidationException, RequirementFieldException, AuthorizationException,
- * EntityNotFoundException {
- * 
- * UserDto dtoExist = selectUserWithAuthorizationControl(userDto.getId());
- * PrizeRequestDto prizeRequest =
- * DTOUtilty.forceSingleEntity(userDto.getPrizes());
- * validatePrizeRequest(dtoExist, prizeRequest);
- * dtoExist.addPrizeRequest(prizeRequest); UserDefinition user =
- * dtoExist.toEntity(); user = dao.update(user); return new UserDto(user, false,
- * true); }
- * 
- * // only admin private UserDto userDelete(UserDto model) { dao.delete(model);
- * return model; }
- * 
- * //// functions for security
- * 
- * private boolean authorizationVisibilityControl(UserDto defUser) throws
- * AuthorizationException { CustomUserDetails authorizedUser = userDetails; if
- * (authorizedUser == null || defUser == null) { throw new
- * AuthorizationException("No authorization"); } if
- * (defUser.getUsername().equalsIgnoreCase(authorizedUser.getUsername())) {
- * return true; } else { for (GrantedAuthority role :
- * authorizedUser.getAuthorities()) { if
- * (role.getAuthority().equalsIgnoreCase("ROLE_" +
- * UserRoleTYPE.ADMIN.getName())) { return true; } } throw new
- * AuthorizationException("No authorization"); }
- * 
- * }
- * 
- * private boolean validatePrizeRequest(UserDto user, PrizeRequestDto
- * prizeRequest) throws EntityValidationException, RequirementFieldException,
- * EntityNotFoundException {
- * 
- * DTOUtilty.JSONValidation(prizeRequest); PrizeDefinition cacheModel =
- * PrizeCache.getInstance().getById(prizeRequest.getId()); if (cacheModel ==
- * null) { throw new EntityNotFoundException("Entity not found"); } if
- * (user.getBbPoint() < cacheModel.getPrice()) { throw new
- * EntityValidationException("Insufficient balance"); }
- * 
- * return true; }
- * 
- * 
- * private boolean compareBalanceWithAmount(Long bbPoint, Long prizeId) throws
- * EntityValidationException { Long price = ((BigInteger)
- * dao.executeSingleResultQuery(SQLCache.selectPrizePrice, false,
- * prizeId)).longValue(); if (price > bbPoint) { throw new
- * EntityValidationException("The requested prize price cannot be more than BBpoint"
- * ); }
- * 
- * return true; }
- * 
- * 
- * private boolean validateCoupon(UserDto existDto, CouponDto couponDto) throws
- * EntityValidationException, RequirementFieldException, EntityNotFoundException
- * { Long bbPoint = existDto.getBbPoint(); if
- * (!DTOUtilty.JSONValidation(couponDto)) { throw new
- * RequirementFieldException("Insufficient values ​​entered for mandatory fields"
- * ); } if (couponDto.getPrice() > bbPoint) { throw new
- * EntityValidationException("Amount cannot be more than BBPoint"); }
- * couponAmountValidation(couponDto); return true; }
- * 
- * private void couponAmountValidation(CouponDto coupon) throws
- * RequirementFieldException, EntityValidationException, EntityNotFoundException
- * { Long totalPrice = 1L; for (QuestionAnswerDto dto : coupon.getDetails()) {
- * QuestionDefinition cacheModel =
- * QuestionCache.getInstance().getById(dto.getQuestion().getId()); if
- * (cacheModel == null) { throw new EntityNotFoundException("Entity not found");
- * // cacheModel = (QuestionDefinition) dao.executeSingleResultQuery("SELECT *
- * FROM // QUESTION_DEFINITION WHERE ID=?", dto.getId()); //
- * if(cacheModel==null) { // throw new
- * EntityNotFoundException("Entity not found"); // } } if
- * (dto.getAnswer().equalsIgnoreCase("Y")) { totalPrice *=
- * cacheModel.getYesPrice(); } else if (dto.getAnswer().equalsIgnoreCase("N")) {
- * totalPrice *= cacheModel.getNoPrice(); } else { throw new
- * EntityValidationException("Unacceptable value"); }
- * 
- * }
- * 
- * if (coupon.getAmount() / coupon.getPrice() != totalPrice) { throw new
- * EntityValidationException("Unacceptable value"); }
- * 
- * }
- * 
- * private UserDto selectUserWithAuthorizationControl(Long id) throws
- * AuthorizationException, EntityNotFoundException { UserDefinition userExist =
- * dao.select(id); if (userExist == null || userExist.getUsername() == null) {
- * throw new EntityNotFoundException("Kullanıcı bulunamadı"); } UserDto dtoExist
- * = new UserDto(userExist); authorizationVisibilityControl(dtoExist); return
- * dtoExist; }
- */
-
-//
-
-/*
- * 
- * 
- * DELIMITER $$ CREATE TRIGGER BBPointUpdate AFTER INSERT ON
- * bibilsem_schema.user_coupon_list FOR each row begin DECLARE dPrice bigint;
- * DECLARE dBBPoint bigint; SELECT coupon_price INTO dPrice FROM
- * coupon_definition where id = NEW.coupon_id; SELECT bbpoint INTO dBBPoint FROM
- * user_definition where id = NEW.user_id; IF(dBBPoint < dPrice ) THEN UPDATE
- * coupon_definition SET EDATE = NOW(),coupon_status='F' WHERE ID =
- * NEW.coupon_id; ELSE UPDATE user_definition SET bbpoint = bbpoint - dPrice
- * where id = NEW.user_id; END IF;
- * 
- * END$$ DELIMITER ;
- * 
- */

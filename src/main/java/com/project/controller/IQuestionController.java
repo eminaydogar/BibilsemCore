@@ -18,19 +18,21 @@ import io.swagger.annotations.Api;
 @RequestMapping(QuestionURL.basePath)
 public interface IQuestionController {
 
-	
 	@GetMapping(value = QuestionURL.getAll)
 	BBResponse<?> getAll();
-	
+
 	@PostMapping(value = QuestionURL.save)
 	BBResponse<?> save(@RequestBody QuestionBean bean);
-	
+
 	@PostMapping(value = QuestionURL.update)
 	BBResponse<?> update(@RequestBody QuestionBean bean);
-	
+
 	@GetMapping(value = QuestionURL.refresh)
 	Map<String, Object> refresh();
-	
+
 	@PostMapping(value = QuestionURL.inactive)
 	BBResponse<?> inactive(@PathVariable Long id);
+
+	@GetMapping(value = QuestionURL.getLatest)
+	BBResponse<?> getLatest();
 }

@@ -20,6 +20,9 @@ public class UserURL {
 	@URLSecurity(accessType = {RoleType.USER,RoleType.ADMIN})
 	public static final String savePrize = "/savePrize";
 	
+	@URLSecurity(accessType = {RoleType.USER,RoleType.ADMIN})
+	public static final String getWealthyUsers = "/getWealthyUsers";
+	
 	
 	////////////// only admins///////////////////////////////////////////////77
 

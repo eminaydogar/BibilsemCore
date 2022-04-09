@@ -68,16 +68,16 @@ public class UserCouponBean extends BaseBean {
 		model.setEdate(null);
 		model.setSdate(new Date());
 		model.setStatus("W");
-		model.setDetails(setAnswerBeans(answers));
+		//model.setDetails(setAnswerBeans(answers));
 		return model;
 	}
 	
-	private Set<QuestionAnswerDefinition> setAnswerBeans(Set<AnswerBean> beanList) throws EntityNotFoundException{
+	/*private Set<QuestionAnswerDefinition> setAnswerBeans(Set<AnswerBean> beanList) throws EntityNotFoundException{
 		Set<QuestionAnswerDefinition> answers = new HashSet<QuestionAnswerDefinition>();
 		for(AnswerBean answer:beanList) {
 			answers.add(answer.toEntity());
 		}
 		return answers;
-	}
+	} */
 
 }

@@ -64,6 +64,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		}
 		
 		v.antMatchers("/swagger-ui/*").hasAnyRole(RoleType.ADMIN.getName());
+		v.antMatchers("/api/test/*").permitAll();
 		
 		return v;
 

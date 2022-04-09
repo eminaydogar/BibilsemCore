@@ -1,5 +1,7 @@
 package com.project.service;
 
+import java.util.List;
+
 import com.project.common.bean.LoginBean;
 import com.project.common.bean.RegisterBean;
 import com.project.common.bean.UserCouponBean;
@@ -16,4 +18,5 @@ public interface IUserService {
 	public BBResponse<UserDto> saveCoupon(UserCouponBean bean);
 	public BBResponse<UserDto> savePrizeRequest(UserPrizeRequestBean bean);
 	public BBResponse<UserDto> updateUser(UserUpdateBean bean);
+	public BBResponse<List<UserDto>> findWealthyUsers();
 }

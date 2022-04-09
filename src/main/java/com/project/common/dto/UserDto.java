@@ -43,7 +43,7 @@ public class UserDto implements IDto, Serializable {
 	private void setter(UserDefinition user) {
 		this.id = user.getId();
 		this.username = user.getUsername();
-		this.password = user.getPassword();
+		this.password=user.getPassword();
 		this.email = user.getEmail();
 		this.bbPoint = user.getBbPoint();
 		this.isBlackList = user.getIsBlackList();

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -59,6 +60,7 @@ public class Executor {
 	}
 
 	// @Scheduled(cron = every1MinDelay)
+	@Async
 	public void executeEvery1Minute() {
 
 		try {
@@ -80,6 +82,7 @@ public class Executor {
 
 	/* yarım saat ve üzeri ve <1 saat arayla çalışacak joblar burada tanımlanmalı */
 	// @Scheduled(cron = every30MinDelay)
+	@Async
 	public void executeEvery30Minute() {
 
 		try {
@@ -101,6 +104,7 @@ public class Executor {
 
 	/* 1 saat ve üzeri arayla çalışacak joblar burada tanımlanmalı */
 	// @Scheduled(cron = every60MinDelay)
+	@Async
 	public void executeEvery60Minute() {
 
 		try {

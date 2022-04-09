@@ -22,4 +22,7 @@ public class QuestionURL {
 
 	@URLSecurity(accessType = {RoleType.ADMIN,RoleType.USER})
 	public static final String getAll = "/getAll";
+	
+	@URLSecurity(accessType = {RoleType.ADMIN,RoleType.USER})
+	public static final String getLatest = "/getLatest";
 }

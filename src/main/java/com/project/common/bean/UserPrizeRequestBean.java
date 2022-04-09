@@ -32,11 +32,11 @@ public class UserPrizeRequestBean extends BaseBean {
 	public PrizeRequestDefinition toEntity() throws EntityNotFoundException {
 		PrizeRequestDefinition model = new PrizeRequestDefinition();
 		model.setCdate(new Date());
-		PrizeDefinition prize = PrizeCache.getContext().getById(prizeId);
+		/*PrizeDefinition prize = PrizeCache.getContext().getById(prizeId);
 		if (prize == null) {
 			throw new EntityNotFoundException("Nonexistent prize value");
 		}
-		model.setPrize(prize);
+		model.setPrize(prize); */
 		model.setRequestStatus("W");
 		model.setStatusDescription(waiting);
 		return model;

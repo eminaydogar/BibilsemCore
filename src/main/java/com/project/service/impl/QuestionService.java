@@ -133,6 +133,23 @@ public class QuestionService extends BaseService implements IQuestionService {
 		return response;
 	}
 
+	@Override
+	public BBResponse<List<QuestionDto>> findLatestQuestions() {
+		BBResponse<List<QuestionDto>> response = null;
+		List<QuestionDto> resultList = new ArrayList<>();
+		try {
+			response = new BBResponse<>();
+			List<QuestionDefinition> questionList = repo.findTop3ByOrderBySdateDesc();
+			for (QuestionDefinition question : questionList) {
+				resultList.add(new QuestionDto(question));
+			}
+			response.setSuccessResponse(resultList);
+		} catch (Exception e) {
+			response.setFaildResponse(e);
+		}
+		return response;
+	}
+
 	private void fillEntity4Update(QuestionBean bean, QuestionDefinition question) {
 		if (bean.getAnswer() != null) {
 			question.setAnswer(bean.getAnswer());

@@ -130,6 +130,7 @@ public class CoreManager implements ICoreManager {
 		return result;
 
 	}
+	
 
 	@Override
 	@org.springframework.transaction.annotation.Transactional

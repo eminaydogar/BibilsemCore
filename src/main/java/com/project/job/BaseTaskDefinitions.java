@@ -12,6 +12,7 @@ import com.project.job.scheduledTask.CouponValidatorJob;
 import com.project.job.scheduledTask.TestJob;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -24,10 +25,13 @@ public class BaseTaskDefinitions {
 	 * 
 	 */
 	@Autowired
+	@Setter
 	private CouponValidatorJob couponValidatorJob;
 	@Autowired
+	@Setter
 	private TestJob testJob;
 	@Autowired
+	@Setter
 	private CacheRefreshJob cacheRefreshJob;
 
 	/*

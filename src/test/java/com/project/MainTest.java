@@ -7,27 +7,17 @@ import java.util.Date;
 
 import com.project.cache.BBConstant.TIME_TYPE;
 import com.project.utility.ObjectUtilty;
+import com.project.utility.QueryBuilder;
 
 public class MainTest {
-	private static final SimpleDateFormat DF_withNotSecondAndMillisecond =new SimpleDateFormat("ddMMyyyyhhmm");
+	//private static final SimpleDateFormat DF_withNotSecondAndMillisecond =new SimpleDateFormat("ddMMyyyyhhmm");
 	public static void main(String[] args) {
-		Date date1 = new Date();
-		Date date2 = new Date();
+        
+		QueryBuilder builder = new QueryBuilder("Select * from question_definition where id=?");
+		Long[] values = {2L,3L,5L,55L,90L};
+		builder.setParams(values);
+		System.out.println(builder.toString());
 		
-		Date date1n = ObjectUtilty.createNextDate(TIME_TYPE.MINUTE, 2);
-		Date date2n = ObjectUtilty.createNextDate(TIME_TYPE.MINUTE, 2);
-		
-		
-		String da1 = DF_withNotSecondAndMillisecond.format(date1);
-		String da2 = DF_withNotSecondAndMillisecond.format(date2);
-		
-		String d1 = DF_withNotSecondAndMillisecond.format(date1n);
-		String d2 = DF_withNotSecondAndMillisecond.format(date2n);
-		
-		System.out.println(ObjectUtilty.compareDate_ddMMyyyyhhmm(date1n, date1n));
-		
-		System.out.println("calisan date -- > "+da1+"   ileriki tarih --> "+d1);
-		System.out.println("calisan date -- > "+da2+"   ileriki tarih --> "+d2);
 	}
 
 }

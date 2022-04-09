@@ -47,4 +47,9 @@ public class QuestionController implements IQuestionController {
 		return service.getAll();
 	}
 
+	@Override
+	public BBResponse<?> getLatest() {
+		return service.findLatestQuestions();
+	}
+
 }

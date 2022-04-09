@@ -4,13 +4,16 @@ package com.project.utility;
 public class QueryBuilder {
 
 	private String queryString = "";
-	int pointer = 1;
 
 	public void append(String query) {
 		queryString += query;
 	}
 
 	public QueryBuilder() {
+	};
+
+	public QueryBuilder(String query) {
+		this.queryString = query;
 	};
 
 	public QueryBuilder filter(String condition, Object value) {
@@ -47,13 +50,13 @@ public class QueryBuilder {
 		for (int i = 0; i < queryArray.length; i++) {
 			if (queryArray[i] == '?') {
 				String pre = queryString.substring(0, i - 1);
-				pre += "IN (";
+				pre += " IN (";
 				for (int j = 0; j < params.length; j++) {
 					pre = setValue(pre, params[j]);
 					if (j == params.length - 1) {
-						pre = ")";
+						pre += ")";
 					} else {
-						pre = ",";
+						pre += ",";
 					}
 				}
 				String suf = queryString.substring(i + 1, queryString.length());

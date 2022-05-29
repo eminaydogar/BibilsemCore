@@ -1,12 +1,10 @@
 package com.project.common.bean;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
 import com.project.common.annotation.Mandatory;
 import com.project.entity.CouponDefinition;
-import com.project.entity.QuestionAnswerDefinition;
 import com.project.exception.EntityNotFoundException;
 
 import lombok.Getter;

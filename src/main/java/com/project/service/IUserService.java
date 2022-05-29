@@ -12,11 +12,18 @@ import com.project.common.dto.UserDto;
 import com.project.entity.BBResponse;
 
 public interface IUserService {
+	
 	public BBResponse<UserDto> register(RegisterBean bean);
+
 	public BBResponse<UserDto> confirmUser(UserVerificationBean bean);
+
 	public BBResponse<UserDto> login(LoginBean bean);
+
 	public BBResponse<UserDto> saveCoupon(UserCouponBean bean);
+
 	public BBResponse<UserDto> savePrizeRequest(UserPrizeRequestBean bean);
+
 	public BBResponse<UserDto> updateUser(UserUpdateBean bean);
+
 	public BBResponse<List<UserDto>> findWealthyUsers();
 }

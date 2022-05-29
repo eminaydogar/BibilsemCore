@@ -39,8 +39,7 @@ public class SecureUtility {
 
 	private SecureUtility() {
 
-		FileReader fileReader = new FileReader();
-		HashMap<String, String> map = fileReader.createResourceReader().readXMLFile(configFileName, configHeader);
+		HashMap<String, String> map = new FileReader().createResourceReader().readXMLFile(configFileName, configHeader);
 		transformation = map.get("transformation");
 		algo = map.get("algo");
 		pwd = map.get("pwd");

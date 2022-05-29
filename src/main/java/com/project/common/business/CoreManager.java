@@ -131,42 +131,23 @@ public class CoreManager implements ICoreManager {
 
 	}
 	
-
 	@Override
 	@org.springframework.transaction.annotation.Transactional
-	public Object[] getObject(String sql, Object... params) {
-		Object[] result = null;
-		try {
-			Query query = manager.createNativeQuery(sql);
-			if (params != null) {
-				for (int i = 1; i <= params.length; i++) {
-					query.setParameter(i, params[i - 1]);
-				}
-			}
-			result = (Object[]) query.getSingleResult();
-		} catch (Exception e) {
-			log.error("(getObject)" + e);
-		}
-		return result;
-	}
-
-	@Override
 	@SuppressWarnings("unchecked")
-	@org.springframework.transaction.annotation.Transactional
-	public List<Object[]> getObjectList(String sql, Object... params) {
-		List<Object[]> result = null;
+	public <T> List<T> getList(Class<?> clazz, String sql, List<Long> ids) {
+		List<T> result = null;
 		try {
-			Query query = manager.createNativeQuery(sql);
-			if (params != null) {
-				for (int i = 1; i <= params.length; i++) {
-					query.setParameter(i, params[i - 1]);
-				}
+			Query query = manager.createNativeQuery(sql, clazz);
+			if (ids != null) {
+					query.setParameter(1,ids);
+				
 			}
-			result = query.getResultList();
+			result = (List<T>) query.getResultList();
 		} catch (Exception e) {
-			log.error("(getObjectList)" + e);
+			log.error("(getList)" + e);
 		}
 		return result;
-	}
 
+	}
+	
 }

@@ -13,12 +13,15 @@ import com.project.cache.BBConstant.TIME_TYPE;
 import com.project.utility.LoggerUtility;
 import com.project.utility.ObjectUtilty;
 
+import lombok.Getter;
+
 @Transactional
 @Service
 public abstract class AJob implements Runnable {
 
 	@Autowired
-	protected JobDao dao;
+	@Getter
+	private JobDao dao;
 
 	final static Logger LOGGER = LoggerFactory.getLogger(AJob.class);
 

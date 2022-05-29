@@ -267,10 +267,7 @@ public class UserService extends BaseService implements IUserService {
 			mailMessage.setChannelType(CHANNEL_TYPE.MAIL);
 			mailMessage.setMessageType(MESSAGE_TYPE.VERIFICATION);
 			mailMessage.setMailTo(user.getEmail());
-			/*
-			 * getMailSender().sendMail(user.getEmail(), MailContent.registerSubject,
-			 * MailContent.registerMessage + messageCode); save(mailMessage);
-			 */
+
 			getCoreContainerService().getMailService().sendMail(user.getEmail(), MailContent.registerSubject,
 					MailContent.registerMessage + messageCode);
 			getCoreContainerService().getCoreManager().save(mailMessage);

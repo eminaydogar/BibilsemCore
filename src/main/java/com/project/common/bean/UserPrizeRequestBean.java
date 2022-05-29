@@ -2,9 +2,7 @@ package com.project.common.bean;
 
 import java.util.Date;
 
-import com.project.cache.PrizeCache;
 import com.project.common.annotation.Mandatory;
-import com.project.entity.PrizeDefinition;
 import com.project.entity.PrizeRequestDefinition;
 import com.project.exception.EntityNotFoundException;
 

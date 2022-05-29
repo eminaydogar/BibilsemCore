@@ -1,45 +1,58 @@
 package com.project.common.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import com.project.common.business.CoreManager;
-import com.project.utility.QueryBuilder;
+import com.project.entity.LogDefinition;
+import com.project.repository.LogRepository;
 
 import lombok.Setter;
 
 @Service
-public class LoggerService {
+public class LoggerService implements ILoggerService {
 
-	private final static String LOG_INSERT_SQL = "INSERT INTO LOG_DEFINITION(CLASS_NAME,METHOD_NAME,ERROR_TYPE,ERROR_MESSAGE,MESSAGE,CDATE) VALUES(?,?,?,?,?,NOW())";
-
+	@Autowired
 	@Setter
-	private CoreManager coreManager = null;
+	private LogRepository repo;
 
-	public boolean save(Class<?> clazz, String methodName, String errorType, Exception exception, String message) {
-		try {
 
-			QueryBuilder queryBuilder = new QueryBuilder();
 
-			queryBuilder.append(LOG_INSERT_SQL);
-
-			queryBuilder.setParam(clazz.getSimpleName());
-
-			queryBuilder.setParam(methodName);
-
-			queryBuilder.setParam(errorType);
-
-			queryBuilder.setParam(exception.getMessage());
-
-			queryBuilder.setParam(message);
-
-			String sqlString = queryBuilder.toString();
-
-			coreManager.saveOrUpdate(sqlString);
-
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
+	@Override
+	public void delete(Long id) {
+		repo.deleteById(id);
+		
 	}
+
+	@Override
+	public LogDefinition getById(Long id) {
+		return repo.findById(id).orElse(null);
+	}
+
+	@Async
+	@Override
+	public void writeErrorLog(String className, String methodName, String errorType, Exception exception) {
+		LogDefinition logDefinition = new LogDefinition();
+		logDefinition.setClassName(className);
+		logDefinition.setMethodName(methodName);
+		logDefinition.setErrorType(errorType);
+		logDefinition.setErrorMessage(exception.getMessage());
+		repo.save(logDefinition);
+	}
+
+	@Async
+	@Override
+	public void writeLog(String className, String methodName, String message) {
+		
+		LogDefinition logDefinition = new LogDefinition();
+		logDefinition.setClassName(className);
+		logDefinition.setMethodName(methodName);
+		logDefinition.setMessage(message);
+		repo.save(logDefinition);
+		
+	}
+
+	
+	
 
 }

@@ -14,12 +14,10 @@ public interface ICoreManager {
 
 	public <T> List<T> getList(Class<?> clazz, String sql, Object... params);
 
-	public Object getObject(String sql, Object... params);
-
-	public Object getObjectList(String sql, Object... params);
-
 	void update(Object entity);
 
-	<T> T findById(Class<T> clazz, Long id);
+	public <T> T findById(Class<T> clazz, Long id);
+
+	public <T> List<T> getList(Class<?> clazz, String sql, List<Long> ids);
 
 }

@@ -27,7 +27,7 @@ public class JobDao {
 	}
 
 	public JobBean initilazer(Long jobId) {
-		Object[] object = coreManager.getObject("SELECT * FROM JOB_DEFINITION WHERE ID=?", jobId);
+		Object[] object = null;//coreManager.getObject("SELECT * FROM JOB_DEFINITION WHERE ID=?", jobId);
 		JobBean bean = new JobBean(object);
 		return bean;
 	}

@@ -18,7 +18,7 @@ public class ObjectUtilty {
 	private static final SimpleDateFormat DF_withNotSecondAndMillisecond = new SimpleDateFormat("ddMMyyyyhhmm");
 	private static final SimpleDateFormat DF_ddMMyyyyhhmmss = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
 
-	@SuppressWarnings("deprecation")
+
 	public static boolean JSONValidation(Object o) throws RequirementFieldException {
 		Class<?> c = o.getClass();
 		Field[] fields = c.getDeclaredFields();
@@ -26,16 +26,15 @@ public class ObjectUtilty {
 			Mandatory val = field.getAnnotation(Mandatory.class);
 			if (val != null) {
 				try {
-
-					if (!field.isAccessible()) {
-						field.setAccessible(true);
-					}
-
+					field.setAccessible(true);
 					if (field.get(o) == null) {
 						throw new RequirementFieldException("Mandatory values ​​are not entered ");
 					}
+
+					field.setAccessible(false);
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					e.printStackTrace();
+					field.setAccessible(false);
 					return false;
 				}
 			}

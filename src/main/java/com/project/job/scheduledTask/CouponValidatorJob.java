@@ -24,7 +24,7 @@ public class CouponValidatorJob extends AJob {
 	@Override
 	protected void execute() {
 
-		List<Object[]> results = dao.getCoreManager().getObjectList("SELECT \r\n" + "				CD.ID COUPON_ID,\r\n"
+		List<Object[]> results = null; /*dao.getCoreManager().getObjectList("SELECT \r\n" + "				CD.ID COUPON_ID,\r\n"
 				+ "				QD.ID QUESTION_ID,\r\n" + "				QAD.ANSWER_VALUE COUPON_ANSWER,\r\n"
 				+ "				QD.ANSWER QUESTION_ANSWER,\r\n" + "				UCL.USER_ID,\r\n"
 				+ "				CD.COUPON_PRICE\r\n" + "				FROM coupon_definition CD \r\n"
@@ -35,7 +35,7 @@ public class CouponValidatorJob extends AJob {
 				+ "				LEFT JOIN QUESTION_DEFINITION QD\r\n" + "				ON QD.ID=QAD.QUESTION_ID\r\n"
 				+ "				                JOIN USER_COUPON_LIST UCL\r\n"
 				+ "                ON UCL.COUPON_ID = CD.ID"
-				+ "                WHERE CD.COUPON_STATUS ='W' AND QD.ANSWER IS NOT NULL ORDER BY COUPON_ID", null);
+				+ "                WHERE CD.COUPON_STATUS ='W' AND QD.ANSWER IS NOT NULL ORDER BY COUPON_ID", null); */
 		CouponValidatiorBean processBean = null;
 		if (results != null) {
 			for (Object[] result : results) {

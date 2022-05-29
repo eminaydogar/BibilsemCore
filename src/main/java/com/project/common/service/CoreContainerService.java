@@ -29,13 +29,11 @@ public class CoreContainerService {
 
 	@Getter
 	@Autowired
-	private LoggerService loggerService;
+	private ILoggerService loggerService;
 
 	@PostConstruct
 	void init() {
 		coreManager.setManager(manager);
-		loggerService.setCoreManager(coreManager);
-
 	}
 
 
